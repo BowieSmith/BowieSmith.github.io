@@ -13,3 +13,15 @@ body {
   border: outset black;
   
 }
+
+h1 {
+  transition: transform 0.5s;
+}
+
+h1:hover {
+  transform: scale(1.2);
+}
+
+span#poke:hover {
+  text-shadow: 0 0 5px red;
+}

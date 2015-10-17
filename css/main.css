@@ -1,0 +1,15 @@
+html {
+  background-color: white;
+}
+
+body {
+  width: 60%;
+  margin: 30px auto 0;
+  background-color: lightblue;
+  color: white;
+  text-align: center;
+  font-family: courier;
+  text-shadow: 0 0 5px black;
+  border: outset black;
+  
+}

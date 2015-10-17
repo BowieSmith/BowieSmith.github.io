@@ -11,7 +11,7 @@ body {
   font-family: courier;
   text-shadow: 0 0 5px black;
   border: outset black;
-  
+  box-shadow: 0 0 20px black;
 }
 
 h1 {

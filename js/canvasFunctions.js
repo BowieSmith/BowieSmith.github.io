@@ -132,7 +132,7 @@ function chaosGame() {
   var myReq = requestAnimationFrame(step);
   setTimeout(function() {
     cancelAnimationFrame(myReq);
-  }, 100000);
+  }, 5000);
   document.getElementById("content").textContent ='"One must still have chaos in oneself to be able to give birth to a dancing star." --Frederick Nietzsche';
 }
 

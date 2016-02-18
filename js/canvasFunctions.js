@@ -68,7 +68,7 @@ function randomWalk() {
     } else if (ran === 2) {
       x += lineSize * -1;
     } else if (ran === 3) {
-      y += linieSize * -1;
+      y += lineSize * -1;
     }
     cxt.lineTo(x, y);
     cxt.stroke();

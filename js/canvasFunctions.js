@@ -167,7 +167,7 @@ function circlesInCircles() {
     var point = points[currentPoint];
     point.style.background = "#" + (Math.ceil(Math.random() * Math.pow(2, 24))).toString(16);
     point.style.left = event.pageX - 10 + "px";
-    point.style.right = event.pageY - 10 + "px";
+    point.style.top = event.pageY - 10 + "px";
     currentPoint = (currentPoint + 1) % points.length;
   });
 })();

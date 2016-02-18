@@ -34,7 +34,7 @@ var cxt = canvas.getContext("2d");
 
 function clearCanvas() {
   cxt.clearRect(0, 0, canvas.width, canvas.height);
-  document.getElementById("context").textContent = '"Nothingness Nothings." --Martin Heidegger';
+  document.getElementById("content").textContent = '"Nothingness Nothings." --Martin Heidegger';
 }
 
 function randomSquares() {
@@ -48,7 +48,7 @@ function randomSquares() {
   setTimeout(function() {
     cancelAnimationFrame(myReq);
   }, 5000);
-  document.getElementById("context").textContent = '"To excite in us tastes, odors, and sounds I believe that nothing is required in external bodies except shapes, numbers, and slow or rapid movements... if ears, tongues, and noses were removed, shapes and numbers would remain, but not odors or tastes or sounds." --Galileo Galilei';
+  document.getElementById("content").textContent = '"To excite in us tastes, odors, and sounds I believe that nothing is required in external bodies except shapes, numbers, and slow or rapid movements... if ears, tongues, and noses were removed, shapes and numbers would remain, but not odors or tastes or sounds." --Galileo Galilei';
 }
 
 function randomWalk() {
@@ -78,7 +78,7 @@ function randomWalk() {
   setTimeout(function() {
     cancelAnimationFrame(myReq);
   }, 5000);
-  document.getElementById("context").textContent = '"Goals transform a random walk into a chase." --Mihaly Csikszentmihalyi';
+  document.getElementById("content").textContent = '"Goals transform a random walk into a chase." --Mihaly Csikszentmihalyi';
 }
 
 function bezierBomb() {
@@ -104,7 +104,7 @@ function bezierBomb() {
   setTimeout(function() {
     cancelAnimationFrame(myReq);
   }, 5000);
-  document.getElementById("context").textContent = '"Is imagination not based partly on the ability to connect notions which, at first sight, look quite unrelated, such as mechanics, electronics, optics, chemistry, foundry and data processing? Is it related to the sense of humor that can detect unexpected relationships between facts that look quite unconnected?" --Pierre Bezier';
+  document.getElementById("content").textContent = '"Is imagination not based partly on the ability to connect notions which, at first sight, look quite unrelated, such as mechanics, electronics, optics, chemistry, foundry and data processing? Is it related to the sense of humor that can detect unexpected relationships between facts that look quite unconnected?" --Pierre Bezier';
 }
 
 function chaosGame() {
@@ -133,7 +133,7 @@ function chaosGame() {
   setTimeout(function() {
     cancelAnimationFrame(myReq);
   }, 100000);
-  document.getElementById("context").textContent ='"One must still have chaos in oneself to be able to give birth to a dancing star." --Frederick Nietzsche';
+  document.getElementById("content").textContent ='"One must still have chaos in oneself to be able to give birth to a dancing star." --Frederick Nietzsche';
 }
 
 function circlesInCircles() {
@@ -149,7 +149,7 @@ function circlesInCircles() {
   setTimeout(function() {
     cancelAnimationFrame(myReq);
   }, 5000);
-  document.getElementById("context").textContent = '"The life of man is a self-evolving circle, which, from a ring imperceptibly small, rushes on all sides outwards to new and larger circles, and that without end. The extent to which this generation of circles, wheel without wheel, will go, depends on the force or truth of the individual soul." --Ralph Waldo Emerson';
+  document.getElementById("content").textContent = '"The life of man is a self-evolving circle, which, from a ring imperceptibly small, rushes on all sides outwards to new and larger circles, and that without end. The extent to which this generation of circles, wheel without wheel, will go, depends on the force or truth of the individual soul." --Ralph Waldo Emerson';
 }
 
 (function mouseTrail() {

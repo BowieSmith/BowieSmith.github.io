@@ -44,3 +44,7 @@ canvas {
 #content {
   margin: 20px;
 }
+
+.top_link {
+    float: right;
+}

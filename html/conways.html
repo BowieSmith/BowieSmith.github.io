@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+    <title>Conway's Game of Life</title>
+    <link rel="stylesheet" href="../css/conways_style.css">
+</head>
+<body>
+    <a href="other_stuff.html">back</a>
+    <div id="left_column">
+        <h1>Conway's Game of Life</h1>
+        <div id="gol_container"></div>
+    </div>
+    <div id="right_column">
+        <br><br><br>
+        <h2>Controls</h2>
+        <button id="toggle">Start</button>
+        <br><br>
+        <button id="clear">Clear</button>
+        <br><br>
+        Speed (in milliseconds):<br>
+        <input type="text" id="speed" value="100" size=4>
+        <br><br>
+        Grid size (in pixels):<br>
+        <input type="text" id="grid_size" value="500" size=4>
+        <br><br>
+        Cells per row:<br>
+        <input type="text" id="cell_count" value="30" size=4>
+        <br><br>
+        Click and drag to:<br>
+        <div id="draw_mode_div">
+            <input type="radio" name="mode" value="draw" checked>Draw
+            <input type="radio" name="mode" value="erase">Erase
+        </div>
+    </div>
+    <script src="../js/game_of_life.js"></script>
+</body>
+</html>

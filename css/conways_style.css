@@ -1,0 +1,31 @@
+body {
+    font-family: courier;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.cell {
+    position: absolute;
+}
+
+#gol_container {
+    margin: auto;
+    background-color: lightgrey;
+    position: relative;
+}
+
+#left_column {
+    float: left;
+    padding-left: 100px;
+}
+
+#right_column {
+    float: left;
+    padding-left: 100px;
+}
+
+.top_link {
+    float: right;
+}

@@ -33,6 +33,23 @@ let new_cell = function(size, xpos, ypos) {
     return new_cell;
 };
 
+// start grid with neat pattern!
+let init_cell_pattern = function(cells, cells_per_row) {
+    let total = cells_per_row * cells_per_row;
+    let half = Math.floor(total / 2) - Math.floor(cells_per_row / 2);
+    let cells_to_init = [];
+    cells_to_init.push(
+        cells[half - 2],
+        cells[half],
+        cells[half + 2],
+        cells[half - cells_per_row - 1],
+        cells[half - cells_per_row + 1],
+        cells[half + cells_per_row - 1],
+        cells[half + cells_per_row + 1]
+    );
+    cells_to_init.forEach(cell => cell.style.backgroundColor = "black");
+};
+
 // Makes new grid for game of life
 // Cells are generated and stored in array
 // Number of cells calculated based on cell size and grid dimension
@@ -133,6 +150,7 @@ let cellCountTextInput = document.querySelector("#cell_count");
 let cells_per_row = parseFloat(cellCountTextInput.value);
 
 let cells = make_grid(grid_dimension, cells_per_row);
+init_cell_pattern(cells, cells_per_row);
 let animation_controller = animate(cells, grid_dimension, cells_per_row);
 
 

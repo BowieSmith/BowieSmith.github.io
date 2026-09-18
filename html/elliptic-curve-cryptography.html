@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elliptic Curve Cryptography</title>
+    <link rel="stylesheet" href="../css/ecc_style.css">
+</head>
+<body>
+    <a class="top_link" href="other_stuff.html">back</a>
+    <header>
+        <h1>Elliptic Curve Cryptography</h1>
+        <p class="subtitle">an interactive walk, no background required</p>
+    </header>
+
+    <nav class="contents">
+        <ol>
+            <li><a href="#why">The problem</a></li>
+            <li><a href="#curve">Meet the curve</a></li>
+            <li><a href="#add">Adding points</a></li>
+            <li><a href="#hop">Hopping</a></li>
+            <li><a href="#clock">Make it a clock</a></li>
+            <li><a href="#trapdoor">The one-way trick</a></li>
+            <li><a href="#dh">A shared secret</a></li>
+            <li><a href="#real">In the real world</a></li>
+        </ol>
+    </nav>
+
+    <!-- 1 ------------------------------------------------------------- -->
+    <section id="why">
+        <h2>1. The problem: agreeing on a secret in public</h2>
+        <p>
+            Every time you see the padlock in your browser, two computers that have never met
+            have just agreed on a secret code &mdash; while anyone on the network could be
+            listening to every message they sent each other. That sounds impossible. How do you
+            whisper across a crowded room?
+        </p>
+        <p>
+            The answer is a special kind of math operation: one that is <strong>easy to do</strong>
+            but <strong>hopeless to undo</strong>. Think of mixing paint. Mixing blue into yellow is
+            easy; un-mixing the green back into its two ingredients is not. If you have a
+            mathematical version of paint-mixing, strangers can build a shared secret out in the
+            open, and eavesdroppers are left holding a bucket of green.
+        </p>
+        <p>
+            Elliptic curve cryptography (ECC) is one such operation. This page builds it up from
+            scratch: first a curve, then a strange rule for "adding" points on it, then a twist that
+            turns that rule into a one-way street. Every picture below is live &mdash; drag things
+            and see what happens.
+        </p>
+    </section>
+
+    <!-- 2 ------------------------------------------------------------- -->
+    <section id="curve">
+        <h2>2. Meet the curve</h2>
+        <p>
+            Despite the name, an elliptic curve is not an ellipse. It is the set of points
+            <span class="math">(x, y)</span> that satisfy
+        </p>
+        <p class="equation">y&sup2; = x&sup3; + a&middot;x + b</p>
+        <p>
+            for some chosen numbers <span class="math">a</span> and <span class="math">b</span>.
+            Move the sliders to change them. Sometimes the curve is a single sweep, sometimes it
+            pinches off into an "egg" plus a tail.
+        </p>
+        <canvas id="curveCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <label>a = <span id="curveAVal">-3</span>
+                <input type="range" id="curveA" min="-5" max="5" step="0.1" value="-3">
+            </label>
+            <label>b = <span id="curveBVal">3</span>
+                <input type="range" id="curveB" min="-5" max="5" step="0.1" value="3">
+            </label>
+        </div>
+        <p class="equation small" id="curveEq"></p>
+        <div class="note">
+            One thing to notice, because it matters later: the curve is always a
+            <strong>mirror image</strong> across the horizontal axis. If <span class="math">(x, y)</span>
+            is on the curve, so is <span class="math">(x, &minus;y)</span>, because squaring a
+            negative number gives the same result.
+        </div>
+    </section>
+
+    <!-- 3 ------------------------------------------------------------- -->
+    <section id="add">
+        <h2>3. Adding points (the weird rule)</h2>
+        <p>
+            Here is where it gets interesting. We are going to define a way to "add" two points on
+            the curve and get a third point on the curve. The rule is geometric:
+        </p>
+        <ol class="steps">
+            <li>Draw a straight line through <span class="p">P</span> and <span class="q">Q</span>.</li>
+            <li>That line hits the curve at exactly one more spot. Call it <span class="math">R</span>.</li>
+            <li>Flip <span class="math">R</span> across the horizontal axis. That mirror point is <span class="s">P + Q</span>.</li>
+        </ol>
+        <p>Drag <span class="p">P</span> and <span class="q">Q</span> anywhere along the curve.</p>
+        <canvas id="addCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <label><input type="checkbox" id="addDouble"> Make Q the same as P (doubling)</label>
+        </div>
+        <p class="readout" id="addReadout"></p>
+        <div class="note">
+            <p><strong>Why the flip?</strong> Without it, the rule would not behave like addition.
+            With it, everything works the way you'd hope: <span class="math">P + Q = Q + P</span>,
+            you can group additions however you like, and there is even a "zero".</p>
+            <p><strong>What if the line is vertical?</strong> Drag Q to be the mirror image of P.
+            The line shoots straight up and never comes back to the curve. We say it hits the
+            <em>point at infinity</em>, and we call that point <span class="math">O</span>. It
+            behaves exactly like zero: <span class="math">P + O = P</span>, and a point plus its
+            mirror image is <span class="math">O</span>.</p>
+            <p><strong>What if P and Q are the same point?</strong> Tick the checkbox. There is
+            no longer a unique line through "two" points, so we use the tangent line &mdash; the
+            line that just grazes the curve at P. The result is <span class="math">P + P</span>,
+            which we write as <span class="math">2P</span>.</p>
+        </div>
+    </section>
+
+    <!-- 4 ------------------------------------------------------------- -->
+    <section id="hop">
+        <h2>4. Hopping: P, 2P, 3P, 4P, &hellip;</h2>
+        <p>
+            Once you can add, you can add repeatedly. Start at <span class="p">P</span>, add P to
+            get <span class="math">2P</span>, add P again to get <span class="math">3P</span>, and
+            so on. Each hop is the same line-and-flip trick. We write <span class="math">k&middot;P</span>
+            for "P added to itself k times".
+        </p>
+        <p>Drag <span class="p">P</span> to a new start. Use the slider to hop.</p>
+        <canvas id="hopCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <label>k = <span id="hopKVal">1</span>
+                <input type="range" id="hopK" min="1" max="14" step="1" value="1">
+            </label>
+            <button id="hopStep">hop once more</button>
+            <button id="hopReset">reset</button>
+        </div>
+        <p class="readout" id="hopReadout"></p>
+        <div class="note">
+            Here is the question the whole subject turns on. Suppose I show you
+            <span class="p">P</span> and I show you the point I landed on after some number of hops.
+            <strong>Can you tell me how many hops I took?</strong> On this smooth curve you might
+            manage it by tracing the bounces. The next section makes that impossible.
+        </div>
+    </section>
+
+    <!-- 5 ------------------------------------------------------------- -->
+    <section id="clock">
+        <h2>5. Make it a clock</h2>
+        <p>
+            On a 12-hour clock, 10 + 5 is not 15 &mdash; it's 3. Numbers wrap around. Mathematicians
+            call this arithmetic <em>modulo 12</em>, and you can do it with any modulus; cryptography
+            uses a prime number, which we'll call <span class="math">p</span>.
+        </p>
+        <p>
+            Now the twist: take the same curve equation, but only allow whole-number coordinates
+            from <span class="math">0</span> to <span class="math">p &minus; 1</span>, and check the
+            equation on a clock of size <span class="math">p</span>. The smooth curve shatters into
+            a cloud of dots.
+        </p>
+        <canvas id="fieldCanvas" width="500" height="500"></canvas>
+        <div class="controls">
+            <label>p = <span id="fieldPVal">97</span>
+                <input type="range" id="fieldP" min="0" max="43" step="1" value="22">
+            </label>
+            <label>a = <span id="fieldAVal">0</span>
+                <input type="range" id="fieldA" min="0" max="20" step="1" value="0">
+            </label>
+            <label>b = <span id="fieldBVal">7</span>
+                <input type="range" id="fieldB" min="0" max="20" step="1" value="7">
+            </label>
+        </div>
+        <p class="equation small" id="fieldEq"></p>
+        <p class="readout" id="fieldCount"></p>
+        <p>
+            It looks like static, but it isn't random. Look for the mirror symmetry across the
+            middle: the top half reflects the bottom half, just like the smooth curve, because
+            <span class="math">&minus;y</span> on a clock is <span class="math">p &minus; y</span>.
+        </p>
+        <p>
+            Better still, <strong>the addition rule still works</strong>. There is no visible line
+            any more, but the formula behind "draw a line, find the third point, flip" only uses
+            adding, multiplying and dividing, and all of those work on a clock. So tap a dot to pick
+            a starting point <span class="p">G</span>, then hop.
+        </p>
+        <div class="controls">
+            <button id="fieldHop">add G again</button>
+            <button id="fieldRun">run until it wraps</button>
+            <button id="fieldReset">reset</button>
+        </div>
+        <p class="readout" id="fieldReadout">Tap a dot to choose G.</p>
+        <div class="note">
+            Watch where the hops land: <span class="math">2G, 3G, 4G&hellip;</span> leap all over
+            the grid with no pattern you could eyeball. And eventually the sequence lands on
+            <span class="math">O</span> (the zero) and starts over &mdash; the number of hops that takes
+            is called the <em>order</em> of G. That's the whole toolbox. Time to build a lock.
+        </div>
+    </section>
+
+    <!-- 6 ------------------------------------------------------------- -->
+    <section id="trapdoor">
+        <h2>6. The one-way trick</h2>
+        <p>
+            From here on we'll fix the curve to <span class="math">y&sup2; = x&sup3; + 7</span> over
+            <span class="math">p = 97</span>, with starting point <span class="math">G = (1, 28)</span>.
+            (That's a toy cousin of the curve Bitcoin uses, which has the very same
+            <span class="math">x&sup3; + 7</span> but a 78-digit prime.) It has 79 points, and hopping
+            from G visits every single one of them before wrapping back to O.
+        </p>
+        <p>
+            The computer has picked a secret number <span class="math">k</span> and hopped that many
+            times from <span class="math">G</span>. It shows you where it landed:
+            <span class="math">Q = k&middot;G</span>. Your job: figure out <span class="math">k</span>.
+            Move the slider to try candidates.
+        </p>
+        <canvas id="dlCanvas" width="500" height="500"></canvas>
+        <div class="controls">
+            <label>your guess: k = <span id="dlGuessVal">1</span>
+                <input type="range" id="dlGuess" min="1" max="78" step="1" value="1">
+            </label>
+            <button id="dlNew">new secret</button>
+        </div>
+        <p class="readout" id="dlReadout"></p>
+        <div class="note" id="dlNote"></div>
+        <p>
+            You found it, but only by trying values until one matched. There was no shortcut. With
+            79 points, that's fine; a computer would be done in a microsecond. Now scale it up.
+        </p>
+        <div class="scale">
+            <p>Bitcoin's curve has this many points:</p>
+            <p class="bignum">115 792 089 237 316 195 423 570 985 008 687 907 852 837 564 279 074 904 382 605 163 141 518 161 494 337</p>
+            <p>That's about 10<sup>77</sup>. The best known shortcut for this guessing game still needs roughly the
+            square root of that many steps &mdash; around 10<sup>38</sup>. If every computer on Earth
+            worked on it, the sun would burn out first.</p>
+        </div>
+        <p>
+            <strong>But going forwards is cheap.</strong> To compute <span class="math">k&middot;G</span>
+            you don't hop k times. You double: <span class="math">G, 2G, 4G, 8G&hellip;</span> and add
+            together the ones you need, following the binary digits of k. Your current guess would take
+            <span id="dlSteps"></span>. A 78-digit k takes about 400 hops. Trivial.
+        </p>
+        <p>
+            That asymmetry &mdash; hopping forward is easy, counting hops backward is impossible
+            &mdash; is the paint-mixing trick. It's called the
+            <em>elliptic curve discrete logarithm problem</em>, and everything else is built on it.
+        </p>
+    </section>
+
+    <!-- 7 ------------------------------------------------------------- -->
+    <section id="dh">
+        <h2>7. Two strangers agree on a secret</h2>
+        <p>
+            Alice and Bob want a shared secret. Eve is reading every message. Here's the protocol
+            (it's called Elliptic Curve Diffie&ndash;Hellman, or ECDH):
+        </p>
+        <ol class="steps">
+            <li>Everyone agrees, in public, on the curve and the start point <span class="math">G</span>.</li>
+            <li>Alice picks a secret number <span class="math">a</span> and sends Bob <span class="math">A = a&middot;G</span>. Bob picks a secret <span class="math">b</span> and sends Alice <span class="math">B = b&middot;G</span>.</li>
+            <li>Alice computes <span class="math">a&middot;B</span>. Bob computes <span class="math">b&middot;A</span>.</li>
+        </ol>
+        <p>
+            Both of those are <span class="math">a&middot;b&middot;G</span> &mdash; the same point. Eve saw
+            <span class="math">G</span>, <span class="math">A</span> and <span class="math">B</span> go by, but to get
+            the shared point she'd need <span class="math">a</span> or <span class="math">b</span>, and that means solving the
+            hop-counting problem from the last section.
+        </p>
+        <canvas id="dhCanvas" width="500" height="500"></canvas>
+        <div class="controls">
+            <label><span class="alice">Alice's secret a</span> = <span id="dhAVal">17</span>
+                <input type="range" id="dhA" min="1" max="78" step="1" value="17">
+            </label>
+            <label><span class="bob">Bob's secret b</span> = <span id="dhBVal">42</span>
+                <input type="range" id="dhB" min="1" max="78" step="1" value="42">
+            </label>
+        </div>
+        <div class="dh-table">
+            <div class="col alice-col">
+                <h3>Alice knows</h3>
+                <p id="dhAliceKnows"></p>
+            </div>
+            <div class="col eve-col">
+                <h3>Eve sees</h3>
+                <p id="dhEveSees"></p>
+            </div>
+            <div class="col bob-col">
+                <h3>Bob knows</h3>
+                <p id="dhBobKnows"></p>
+            </div>
+        </div>
+        <p class="readout" id="dhReadout"></p>
+        <div class="note">
+            Change either secret and the shared point moves &mdash; but it always moves for both of them
+            together. That shared point is then fed into an ordinary cipher to encrypt the actual
+            conversation. This is, more or less exactly, what happens in the first few milliseconds
+            of every secure web connection.
+        </div>
+    </section>
+
+    <!-- 8 ------------------------------------------------------------- -->
+    <section id="real">
+        <h2>8. In the real world</h2>
+        <ul class="plain">
+            <li><strong>HTTPS.</strong> The padlock. Your browser and the server do ECDH on a curve
+                named P-256 or Curve25519 before any page loads.</li>
+            <li><strong>Messaging.</strong> Signal and WhatsApp use Curve25519 to set up keys for
+                end-to-end encryption.</li>
+            <li><strong>Bitcoin and Ethereum.</strong> Your "private key" is a number <span class="math">k</span>;
+                your public key is <span class="math">k&middot;G</span> on the curve secp256k1, which is
+                <span class="math">y&sup2; = x&sup3; + 7</span> over a 256-bit prime. Signing a transaction proves
+                you know <span class="math">k</span> without revealing it.</li>
+            <li><strong>Passkeys, SSH keys, secure boot.</strong> Same trick, different wrapping.</li>
+        </ul>
+        <p>
+            Why curves rather than the older RSA system? Size. A 256-bit elliptic curve key is about as
+            strong as a 3072-bit RSA key, so it's smaller, faster, and easier on phones and smart cards.
+        </p>
+        <h3>What we skipped</h3>
+        <p>
+            Plenty. Digital signatures (ECDSA, EdDSA) build on the same hop-counting problem. Choosing a
+            curve is delicate: some curves have hidden shortcuts and are avoided. Real implementations
+            must run in constant time so a spy can't measure how long the hops took. And a large
+            quantum computer, if one is ever built, could count hops efficiently &mdash; which is why
+            the field is quietly moving to "post-quantum" schemes. But the core idea you've now seen
+            &mdash; easy to hop forward, impossible to count backward &mdash; is the heart of it.
+        </p>
+    </section>
+
+    <footer>
+        <a href="other_stuff.html">back to other stuff</a>
+    </footer>
+
+    <script src="../js/ecc.js"></script>
+</body>
+</html>

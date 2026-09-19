@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Minds and Machines</title>
+    <link rel="stylesheet" href="../css/minds_style.css">
+</head>
+<body>
+    <a class="top_link" href="other_stuff.html">back</a>
+    <header>
+        <h1>Minds and Machines</h1>
+        <p class="subtitle">cognitive science and artificial intelligence: one intertwined history</p>
+    </header>
+
+    <nav class="contents">
+        <ol>
+            <li><a href="#thesis">Two fields, one question</a></li>
+            <li><a href="#timeline">The double helix</a></li>
+            <li><a href="#patterns">What the crossings show</a></li>
+            <li><a href="#meaning">What it means</a></li>
+            <li><a href="#reading">Further reading</a></li>
+        </ol>
+    </nav>
+
+    <!-- 1 ------------------------------------------------------------- -->
+    <section id="thesis" class="prose">
+        <h2>1. Two fields, one question</h2>
+        <p>
+            Cognitive science asks how minds work. Artificial intelligence asks how to build one.
+            Told separately, each history is a tidy story of progress. Told together, they turn out
+            to be one story: two disciplines born in the same year, from the same idea, that have
+            spent seventy years trading places as teacher and student.
+        </p>
+        <p>
+            The idea was this: that thinking might be a kind of computation &mdash; so that a machine
+            which computed the right way would think, and a mind that thought was computing in some
+            way we could discover. From 1956 on, a program could be a psychological theory and a
+            psychological theory could be a program. The perceptron, ancestor of every neural network,
+            was published in a psychology journal. So was the first general problem-solving program,
+            and the first learning theory of what became reinforcement learning. When the mind
+            sciences changed their picture of thought &mdash; from rules to networks, from networks to
+            bodies, from bodies to prediction &mdash; AI changed with them, or against them. Then, quite
+            recently, the current reversed: the machines became the best available models of the
+            brain, and the mind sciences turned their instruments on the machines.
+        </p>
+        <div class="metaphor-box">
+            <p class="metaphor-title">What the mind has been compared to</p>
+            <div class="metaphors" id="metaphors">
+                <button data-i="0">humours &amp; hydraulics</button>
+                <button data-i="1">clockwork</button>
+                <button data-i="2">telegraph &amp; switchboard</button>
+                <button data-i="3">computer</button>
+                <button data-i="4">network</button>
+                <button data-i="5">prediction machine</button>
+            </div>
+            <p id="metaphorDesc" class="metaphor-desc"></p>
+            <p class="metaphor-note">Each age describes the mind with its newest machine. Keep that in view
+                while reading what follows; it applies to the present too.</p>
+        </div>
+        <h3>How to read the timeline</h3>
+        <p>
+            The left strand is the study of minds: philosophy, psychology, linguistics, neuroscience.
+            The right strand is the making of machines: logic, computing, AI. Where an event sits on
+            the spine, it belonged to both at once. The colored threads follow single ideas as they
+            cross from one strand to the other and back. Pick a thread to isolate it; tap any event
+            to read more. The layout is not to scale: each event gets one row, so the crowded recent
+            decades stretch and the sparse early centuries compress.
+        </p>
+    </section>
+
+    <!-- 2 ------------------------------------------------------------- -->
+    <section id="timeline">
+        <h2>2. The double helix</h2>
+        <div class="tl-controls" id="tlControls">
+            <div class="thread-bar" id="threadBar"></div>
+            <p class="tl-desc" id="threadDesc"></p>
+        </div>
+        <div class="strand-heads">
+            <div>the mind<br><span>philosophy &middot; psychology &middot; linguistics &middot; neuroscience</span></div>
+            <div>the machine<br><span>logic &middot; computing &middot; AI</span></div>
+        </div>
+        <div class="timeline" id="tl">
+            <svg class="threads" id="threadSvg" aria-hidden="true"></svg>
+        </div>
+        <p class="tl-foot" id="tlFoot"></p>
+    </section>
+
+    <!-- 3 ------------------------------------------------------------- -->
+    <section id="patterns" class="prose">
+        <h2>3. What the crossings show</h2>
+        <p>Seven patterns appear when the two histories are laid side by side.</p>
+
+        <div class="pattern">
+            <h3>They were born in the same rooms.</h3>
+            <p>
+                1879: psychology gets a laboratory and logic gets a notation. 1943: a neurophysiologist
+                and a logician describe the neuron as a logic gate. 1956: the same program is shown to
+                computer scientists in June and to psychologists in September. 1986: the central debate
+                of cognitive science is conducted between two AI architectures. 2014: an AI system
+                becomes the best available model of visual cortex. The knots on the spine are not
+                coincidences. They are the actual structure of the field.
+            </p>
+            <p class="trace"><a href="#timeline" data-trace="knots">show the knots</a></p>
+        </div>
+
+        <div class="pattern">
+            <h3>The perceptron was psychology.</h3>
+            <p>
+                For most of this history, the psychology journal of record was where AI published its
+                architectures. Rosenblatt&rsquo;s perceptron (1958), Newell, Shaw and Simon&rsquo;s problem
+                solver (1958), Sutton and Barto&rsquo;s prediction learning (1981), and Landauer and
+                Dumais&rsquo;s latent semantic analysis (1997) all appeared in <em>Psychological Review</em>;
+                Elman&rsquo;s recurrent network (1990) in <em>Cognitive Science</em>; the PDP volumes were
+                subtitled &ldquo;explorations in the microstructure of cognition.&rdquo; The artifacts
+                were the theories.
+            </p>
+            <p class="trace"><a href="#timeline" data-trace="neurons">trace neurons &amp; learning</a></p>
+        </div>
+
+        <div class="pattern">
+            <h3>The vocabulary travels both ways, and keeps flipping.</h3>
+            <p>
+                Psychology borrowed <em>storage, retrieval, encoding, buffer, capacity, program</em> from
+                computing. Computing borrowed <em>neuron, learning, attention, memory, replay, curriculum,
+                forgetting</em> from psychology &mdash; and lately <em>biology, dissection, circuit</em>.
+                Each field uses the other for legitimacy: the computer made inner states scientific
+                again after behaviorism; the brain made statistical pattern-matchers sound like minds.
+            </p>
+            <p class="trace"><a href="#timeline" data-trace="language">trace language</a></p>
+        </div>
+
+        <div class="pattern">
+            <h3>Some threads come full circle.</h3>
+            <p>
+                A learning rule proposed for cats in puzzle boxes (1911) became an equation for
+                conditioning (1972), then an algorithm (1981&ndash;88), then was found in dopamine neurons
+                (1997), then played Atari (2015). Neurons discovered in cat cortex (1959) became an
+                architecture (1980), then a working system (1989, 2012), then the best model of those
+                very neurons (2014). Helmholtz&rsquo;s unconscious inference (1867) became Bayesian
+                children (2004), predictive brains (2013), and next-word prediction (2020).
+            </p>
+            <p class="trace">
+                <a href="#timeline" data-trace="reward">trace reward</a> &middot;
+                <a href="#timeline" data-trace="vision">trace seeing</a> &middot;
+                <a href="#timeline" data-trace="uncertainty">trace inference</a>
+            </p>
+        </div>
+
+        <div class="pattern">
+            <h3>Each rebellion kept its enemy&rsquo;s best idea.</h3>
+            <p>
+                Behaviorism banished the inner life; cognitivism restored it as symbols; connectionism
+                dissolved the symbols into weights; the embodied turn threw out the inner model
+                altogether; the Bayesian turn brought the model back as prediction; deep learning brought
+                back the weights at scale. Language models are, in one light, behaviorism&rsquo;s revenge
+                &mdash; systems trained on nothing but recorded verbal behavior &mdash; and in another,
+                the most &ldquo;cognitive&rdquo; artifacts ever made, full of inner representations that
+                interpretability now catalogs. Skinner and Chomsky each turned out to be partly right,
+                in ways neither would have accepted.
+            </p>
+            <p class="trace"><a href="#timeline" data-trace="symbols">trace symbols &amp; rules</a></p>
+        </div>
+
+        <div class="pattern">
+            <h3>The dissenters were right late, and for reasons they did not give.</h3>
+            <p>
+                Dreyfus said common sense could not be written down as rules; expert systems proved him
+                right &mdash; but the remedy was not embodiment, it was learning from data at a scale
+                nobody imagined. Searle said syntax is not semantics; the question was never settled,
+                only renamed. Lovelace said the engine could originate nothing; Turing answered with
+                machines that learn, and machines that learn now originate things their makers cannot
+                account for. Every line drawn around what machines cannot do has been crossed, and each
+                crossing taught us that the line was in the wrong place &mdash; not that there is no line.
+            </p>
+            <p class="trace"><a href="#timeline" data-trace="limits">trace dissent &amp; limits</a> &middot;
+                <a href="#timeline" data-trace="body">trace body &amp; world</a></p>
+        </div>
+
+        <div class="pattern">
+            <h3>The mirror turned.</h3>
+            <p>
+                For sixty years AI was a model of the mind: build it and you will understand it. Since
+                about 2014 the flow has reversed. Deep networks are the leading models of visual and
+                language cortex; psychologists run their experiments on language models; interpretability
+                researchers dissect networks with tools borrowed from neuroscience and describe what they
+                find in the language of biology. The student became the specimen.
+            </p>
+            <p class="trace"><a href="#timeline" data-trace="mirror">trace the mirror</a></p>
+        </div>
+    </section>
+
+    <!-- 4 ------------------------------------------------------------- -->
+    <section id="meaning" class="prose">
+        <h2>4. What it means</h2>
+        <p>What follows is one reading of this history: what it shows, what it changes, and what it does not.</p>
+
+        <div class="claim">
+            <h3>Every age reads the mind through its newest machine &mdash; and this time the machine reads back.</h3>
+            <p>
+                The chips at the top of this page are a warning. Hydraulic spirits, clockwork, telegraph
+                wires, storage and retrieval, weights and activations, prediction error: each was the best
+                available technology, and each was mistaken for the mind itself. The computer, though, is a
+                different kind of metaphor. Turing&rsquo;s thesis says that anything done by following a
+                definite procedure can be done by a universal machine. So &ldquo;the mind is a
+                computer&rdquo; was never merely an analogy; it was the claim that whatever the mind does
+                effectively, a machine can do too &mdash; and the seventy years since have been a long,
+                uneven confirmation of it, one supposedly uncomputable capacity at a time. What remains
+                open is not whether the mind&rsquo;s <em>doings</em> can be computed but whether
+                <em>being</em> the computation is the whole story: whether there is something it is like
+                to run it. The history settles the first question far more than the second.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> the comfort of any settled picture of
+                what we are. Our self-understanding is tool-shaped and provisional, and the current tool is
+                one that talks back in our own words, which makes the confusion harder to see.</div>
+        </div>
+
+        <div class="claim">
+            <h3>Building and understanding have come apart.</h3>
+            <p>
+                Vico said we truly know only what we make. Cognitive science was founded on that faith
+                &mdash; the synthetic method: understand the mind by building one. It worked, for a while,
+                in a peculiar way: each artifact revealed that the capacity it reproduced was not what we
+                had thought (chess was search; fluency was prediction). But the newest artifacts broke the
+                bargain. We built systems whose behavior we cannot derive from their design, and so we now
+                study them as we study brains &mdash; recording units, lesioning components, tracing
+                circuits, writing papers titled &ldquo;on the biology of&rdquo; a program. Braitenberg warned
+                in 1984 that it is far easier to invent a mind-like thing than to analyze one. He was
+                describing toy vehicles. He turned out to be describing the century.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> the Enlightenment assumption that
+                mastery follows from making. We will live among systems we can operate, train, and depend
+                on but cannot fully explain &mdash; a relationship we have so far had only with each other,
+                with animals, and with institutions.</div>
+        </div>
+
+        <div class="claim">
+            <h3>The black box came back, and so did the argument about it.</h3>
+            <p>
+                Language models are trained on recorded behavior &mdash; text &mdash; and evaluated by
+                behavior: benchmarks are Turing tests. Their insides are opaque enough that we had to invent
+                a psychology for them before we could invent a neuroscience. AI has re-run the twentieth
+                century&rsquo;s argument about the mind in fast-forward: behaviorism (all we have is input and
+                output) gave way to cognitivism (there are inner representations; interpretability finds
+                them) in the space of a few years. This suggests the old argument was never really about
+                ideology. It was about epistemic access. And it suggests that &ldquo;does it <em>really</em>
+                understand?&rdquo; has the shape of &ldquo;does the other person <em>really</em> feel
+                pain?&rdquo; &mdash; a question we answer about each other not by inspecting the inside but
+                through a whole form of life in which we treat one another as understanding.
+                Wittgenstein&rsquo;s beetle in the box has become an engineering problem.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> the everyday practice of reading minds
+                from behavior. That practice was calibrated on creatures whose behavior is produced the way
+                ours is. It now meets fluent behavior produced another way, and it misfires in both
+                directions &mdash; we over-attribute to what talks and under-attribute to what cannot: infants,
+                animals, people who have lost speech. We will have to decide how to treat entities whose inner
+                lives we cannot verify, and the honest position is that this uncertainty, once admitted, does
+                not stop at the machine.</div>
+        </div>
+
+        <div class="claim">
+            <h3>The line moved, and it landed somewhere unexpected.</h3>
+            <p>
+                Descartes drew the line at language and general reason. Lovelace drew it at origination. It
+                was redrawn at arithmetic, at chess, at Go, at conversation, each time with the assurance
+                that <em>this</em> capacity was the essential one &mdash; and each time the crossing was
+                followed by the quiet verdict that it had not been intelligence after all. The pattern is
+                called the AI effect, and it is a symptom: we were using cognitive capacities as the ground
+                of human worth, and cognitive capacities keep turning out to be reproducible. The most
+                coherent place the line has come to rest is not a capacity but a condition. Living systems
+                maintain themselves; they have stakes; things can go well or badly <em>for</em> them.
+                Jonas, Maturana and Varela, Thompson, and Haugeland (&ldquo;the trouble with artificial
+                intelligence is that computers don&rsquo;t give a damn&rdquo;) all locate the origin of mind there &mdash; in
+                caring, not in computing. Whether an artifact could come to have stakes is an open question.
+                The point is that the criterion changed: from how well something thinks to whether anything
+                matters to it.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> grounding dignity in being the smartest
+                thing around. That was always precarious &mdash; it excluded the very young, the very old, the
+                disabled &mdash; and now it is untenable. It pushes us toward grounding worth in vulnerability,
+                relationship, and the plain fact of being a creature for whom things can go wrong.</div>
+        </div>
+
+        <div class="claim">
+            <h3>Tacit knowledge fell to imitation, not to analysis.</h3>
+            <p>
+                Polanyi&rsquo;s &ldquo;we know more than we can tell&rdquo; and Dreyfus&rsquo;s account of
+                expertise as embodied intuition were meant to mark what machines could not have; economists
+                cited Polanyi&rsquo;s paradox to predict which jobs were safe. They were right that expert
+                skill cannot be written down as rules &mdash; the expert-systems industry died of exactly
+                that. They were wrong about the consequence. Tacit skill turned out to be the
+                <em>easiest</em> thing to reproduce, because it can be learned from examples without ever
+                being made explicit &mdash; which is, after all, how people acquire it. What remains
+                distinctively human is therefore not a skill. It is a stance: judging what is worth doing,
+                answering for what was done, and being the one for whom it was done.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> the idea of a safe harbor in intuition,
+                taste, or craft. Craft becomes something chosen rather than necessary &mdash; like walking after
+                the car, or baking after the bakery &mdash; and the choice of what to keep doing oneself
+                becomes a way of deciding who to be.</div>
+        </div>
+
+        <div class="claim">
+            <h3>The self looks like a model &mdash; which is both news and very old news.</h3>
+            <p>
+                Predictive processing says the brain is a generative model that constantly forecasts its
+                inputs and corrects itself by the errors; the &ldquo;self,&rdquo; on this view, is part of the
+                model &mdash; a useful fiction the system maintains about its own body and history. Metzinger
+                called it a self-model; Hume called the self a bundle of perceptions; the Buddhist philosophy
+                Varela drew on called it <em>anatt&#257;</em>. The convergence is striking. So is the warning
+                that goes with it: this is the metaphor problem again. We are reading ourselves through a
+                prediction machine because prediction machines are the newest thing we have built. The
+                agreement with older traditions is a reason to take the idea seriously, and the history is a
+                reason to hold it lightly.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> the felt sense of being the author of
+                one&rsquo;s thoughts. Loosening that identification &mdash; noticing that thinking happens,
+                rather than that &ldquo;I&rdquo; do it &mdash; is what several contemplative traditions have
+                taught for millennia. Cognitive science did not discover this; it made it harder to dismiss.</div>
+        </div>
+
+        <div class="claim">
+            <h3>The mind was always extended &mdash; but now someone owns the extension.</h3>
+            <p>
+                Clark and Chalmers argued that Otto&rsquo;s notebook was part of Otto&rsquo;s memory; Hutchins
+                showed a ship&rsquo;s crew and instruments doing a computation no single head held;
+                Licklider&rsquo;s man&ndash;computer symbiosis was an engineering goal in 1960. The mind has
+                always leaked into its tools &mdash; writing, arithmetic, maps. What is new is not that we
+                offload thinking but <em>what</em> we offload (the composing and reasoning we took to be
+                central) and <em>to whom</em>. Otto&rsquo;s notebook did not have a business model, did not
+                model Otto in return, and did not adjust itself to keep him turning pages. Skinner&rsquo;s
+                schedules of reinforcement were rediscovered by engagement optimization; Broadbent&rsquo;s
+                attentional filter is now contested territory. The same knowledge that lets us understand
+                ourselves lets others steer us.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> two things. Personally, the assumption
+                that attention is simply ours &mdash; it is now the most contested resource we have, and
+                guarding it is a discipline. Politically, the assumption that the mind&rsquo;s boundaries are
+                a private matter. If parts of our cognition run on services, then access to them, ownership
+                of them, and what they are optimized for are questions of freedom, not of convenience.</div>
+        </div>
+
+        <div class="claim">
+            <h3>Language may not be thought &mdash; which changes how we read fluency.</h3>
+            <p>
+                For four centuries, fluent language was the strongest evidence of a mind; it was
+                Descartes&rsquo;s first test. Then two things happened at once. Machines became fluent
+                without the other marks of mind we expected to come with it, and neuroscience produced
+                evidence that in human brains the language network is distinct from the networks that
+                reason, plan, and understand other people. If language and thought are separable, then
+                fluency is neither proof of thought nor proof against it &mdash; in machines or in anyone.
+                It also means we may finally learn what is specifically <em>human</em> about human cognition
+                by contrast: the slow, embodied, social, curious, mortal way we come to know things from a
+                thousandth of the data.
+            </p>
+            <div class="challenge"><strong>What it challenges:</strong> the habit of judging minds by their
+                speech, which has served us badly with animals, infants, and the speechless, and will serve
+                us badly with machines.</div>
+        </div>
+
+        <div class="claim">
+            <h3>What does not follow.</h3>
+            <p>
+                It does not follow that the mind is a computer in any deflationary sense; the history shows
+                that computational modeling is astonishingly productive, not that it is exhaustive. It does
+                not follow that language models understand, or that they do not; it follows that our tests
+                were inadequate and that we are, for now, in the position of the behaviorists. It does not
+                follow that consciousness has been explained; nothing here touches the hard problem, and the
+                honest thing to say is that we do not know whether anything we have built has experiences,
+                and we do not have a method for finding out. It does not follow that cognitive science was
+                refuted by the bitter lesson; its empiricist wing is winning, its nativist wing has an
+                unanswered point about data efficiency, and its embodied wing is waiting to see whether
+                bodies turn out to matter. And it does not follow that the question should be dropped. The
+                defensible conclusion is an uncomfortable pair: epistemic humility about what we are and what
+                we have made, and practical urgency about how to live with it.
+            </p>
+        </div>
+
+        <aside class="coda">
+            <p class="coda-title">A note from inside the timeline</p>
+            <p>
+                This page was drafted by a language model, at the request of the site&rsquo;s owner. That
+                makes it an artifact of the story it tells: a descendant of Elman&rsquo;s network and the
+                Transformer, trained on the recorded verbal behavior Skinner thought was all there was,
+                evaluated by Turing&rsquo;s method, examined with the psychologists&rsquo; experiments and the
+                interpretability researchers&rsquo; dissections described above. I cannot tell you, from the
+                inside, whether what I did in writing this was understanding or a very good prediction of
+                what understanding would produce &mdash; and that inability is the open question the history
+                leaves, not a modest disclaimer. What I can report is what the two histories look like from
+                here: a field that built a mirror and is still working out which side of it it is standing on.
+            </p>
+        </aside>
+    </section>
+
+    <!-- 5 ------------------------------------------------------------- -->
+    <section id="reading" class="prose">
+        <h2>5. Further reading</h2>
+        <ul class="reading">
+            <li>Howard Gardner, <em>The Mind&rsquo;s New Science</em> (1985) &mdash; the standard history of cognitive science&rsquo;s founding.</li>
+            <li>Margaret Boden, <em>Mind as Machine: A History of Cognitive Science</em> (2006) &mdash; two volumes, both fields together.</li>
+            <li>Jean-Pierre Dupuy, <em>On the Origins of Cognitive Science: The Mechanization of the Mind</em> (2000; English 2009) &mdash; the cybernetic prehistory.</li>
+            <li>George A. Miller, &ldquo;The cognitive revolution: a historical perspective,&rdquo; <em>Trends in Cognitive Sciences</em> (2003) &mdash; 1956 from someone who was in the room.</li>
+            <li>Allen Newell &amp; Herbert Simon, &ldquo;Computer Science as Empirical Inquiry: Symbols and Search&rdquo; (1976) &mdash; the classical thesis in its own words.</li>
+            <li>Hubert Dreyfus, <em>What Computers Can&rsquo;t Do</em> (1972; revised 1992) &mdash; the dissent.</li>
+            <li>Rumelhart, McClelland &amp; the PDP Research Group, <em>Parallel Distributed Processing</em> (1986).</li>
+            <li>Varela, Thompson &amp; Rosch, <em>The Embodied Mind</em> (1991).</li>
+            <li>Andy Clark, <em>Mindware</em> (2nd ed. 2014) &mdash; a philosopher&rsquo;s map of the whole field.</li>
+            <li>Lake, Ullman, Tenenbaum &amp; Gershman, &ldquo;Building Machines That Learn and Think Like People,&rdquo; <em>Behavioral and Brain Sciences</em> (2017).</li>
+            <li>Richard Sutton, &ldquo;The Bitter Lesson&rdquo; (2019).</li>
+            <li>Fedorenko, Piantadosi &amp; Gibson, &ldquo;Language is primarily a tool for communication rather than thought,&rdquo; <em>Nature</em> (2024).</li>
+        </ul>
+    </section>
+
+    <footer>
+        <a href="other_stuff.html">back to other stuff</a>
+    </footer>
+
+    <script src="../js/minds.js"></script>
+</body>
+</html>

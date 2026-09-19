@@ -1,0 +1,504 @@
+body {
+    font-family: courier, monospace;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+    line-height: 1.55;
+    color: #222;
+    background: #fff;
+}
+
+.top_link {
+    float: right;
+    margin-top: 12px;
+}
+
+header {
+    text-align: center;
+    padding-top: 30px;
+    clear: both;
+}
+
+h1 {
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    margin-top: 0;
+    color: #666;
+}
+
+h2 {
+    margin-top: 60px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 6px;
+}
+
+h3 {
+    margin-bottom: 6px;
+}
+
+.prose {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contents {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.contents ol {
+    padding-left: 24px;
+}
+
+.contents a {
+    color: #222;
+}
+
+/* ---- metaphor strip ---- */
+
+.metaphor-box {
+    background: #f4f4f4;
+    border-left: 4px solid #bbb;
+    padding: 12px 16px;
+    margin: 24px 0;
+}
+
+.metaphor-title {
+    margin: 0 0 8px;
+    font-weight: bold;
+}
+
+.metaphors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.metaphors button,
+.tbtn {
+    font-family: inherit;
+    font-size: 0.85em;
+    padding: 4px 10px;
+    border: 1px solid #bbb;
+    background: #fff;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #222;
+}
+
+.metaphors button:hover,
+.tbtn:hover {
+    border-color: #555;
+}
+
+.metaphors button.active,
+.tbtn.active {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+}
+
+.metaphor-desc {
+    margin: 10px 0 4px;
+    min-height: 3.1em;
+    color: #333;
+}
+
+.metaphor-note {
+    margin: 6px 0 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* ---- timeline controls ---- */
+
+.tl-controls {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #fff;
+    padding: 10px 0 8px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.thread-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.tbtn .sw {
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--c, #888);
+}
+
+.tbtn.knots .sw {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid #222;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.tbtn.active .sw {
+    outline: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.tl-desc {
+    margin: 8px 0 0;
+    color: #444;
+    font-size: 0.9em;
+    min-height: 1.4em;
+}
+
+.tl-desc .count {
+    color: #777;
+}
+
+.strand-heads {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 72px;
+    margin: 22px 0 8px;
+    text-align: center;
+    font-weight: bold;
+    color: #444;
+}
+
+.strand-heads span {
+    font-weight: normal;
+    font-size: 0.8em;
+    color: #777;
+}
+
+.tl-foot {
+    color: #777;
+    font-size: 0.85em;
+    text-align: center;
+    margin-top: 16px;
+}
+
+/* ---- the timeline itself ---- */
+
+.timeline {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 72px;
+    row-gap: 14px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e1e0d9;
+    transform: translateX(-50%);
+}
+
+.threads {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 1;
+}
+
+.threads path {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.38;
+    transition: opacity 0.2s, stroke-width 0.2s;
+}
+
+.timeline.isolate .threads path {
+    opacity: 0.05;
+}
+
+.timeline.isolate .threads path.active {
+    opacity: 0.95;
+    stroke-width: 2.5;
+}
+
+.threads path.hl {
+    opacity: 0.95;
+    stroke-width: 2.5;
+}
+
+.ev {
+    position: relative;
+    z-index: 2;
+    border: 1px solid #d8d8d8;
+    border-radius: 4px;
+    padding: 10px 12px 9px;
+    background: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s, box-shadow 0.15s;
+}
+
+.ev:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #222;
+}
+
+.ev.hl {
+    box-shadow: 0 0 0 2px #222;
+}
+
+.ev.side-cog {
+    grid-column: 1;
+    background: #faf7f2;
+}
+
+.ev.side-ai {
+    grid-column: 2;
+    background: #f3f6fa;
+}
+
+.ev.side-both {
+    grid-column: 1 / 3;
+    justify-self: center;
+    width: min(100%, 560px);
+    border: 2px solid #333;
+    background: #fff;
+}
+
+.timeline.isolate .ev:not(.in) {
+    opacity: 0.28;
+}
+
+.ev-year {
+    position: absolute;
+    top: 9px;
+    width: 72px;
+    text-align: center;
+    font-weight: bold;
+    color: #444;
+    font-size: 0.9em;
+    line-height: 1.3;
+    /* a white halo keeps the year legible where it sits on the rails */
+    text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 4px #fff, 0 0 5px #fff;
+}
+
+.side-cog .ev-year {
+    left: 100%;
+}
+
+.side-ai .ev-year {
+    right: 100%;
+}
+
+.side-both .ev-year {
+    position: static;
+    width: auto;
+    display: block;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.ev-tag {
+    display: none;
+    font-size: 0.72em;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ev-title {
+    margin: 0 0 6px;
+    font-size: 1em;
+    line-height: 1.35;
+}
+
+.ev-text {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.ev-more {
+    display: none;
+    margin: 8px 0 0;
+    padding-top: 8px;
+    border-top: 1px dashed #ccc;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.ev.open .ev-more {
+    display: block;
+}
+
+.ev-chips {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 0.75em;
+    color: #555;
+}
+
+.chip::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--c, #888);
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.ev-hint {
+    margin-top: 6px;
+    font-size: 0.75em;
+    color: #999;
+}
+
+.ev.open .ev-hint {
+    display: none;
+}
+
+/* ---- patterns & meaning ---- */
+
+.pattern {
+    margin: 24px 0;
+}
+
+.pattern h3 {
+    margin-bottom: 4px;
+}
+
+.pattern p {
+    margin-top: 6px;
+}
+
+.trace {
+    font-size: 0.9em;
+}
+
+.trace a {
+    color: #222;
+}
+
+.claim {
+    margin: 32px 0;
+}
+
+.claim h3 {
+    margin-bottom: 4px;
+}
+
+.claim p {
+    margin-top: 6px;
+}
+
+.challenge {
+    background: #f4f4f4;
+    border-left: 4px solid #bbb;
+    padding: 10px 14px;
+    margin: 12px 0 0;
+    font-size: 0.95em;
+}
+
+.coda {
+    border: 1px dashed #999;
+    padding: 14px 16px;
+    margin: 40px 0 10px;
+    color: #333;
+}
+
+.coda-title {
+    margin: 0 0 6px;
+    font-weight: bold;
+}
+
+.coda p:last-child {
+    margin-bottom: 0;
+}
+
+.reading {
+    padding-left: 20px;
+}
+
+.reading li {
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+footer {
+    margin-top: 60px;
+    text-align: center;
+}
+
+/* ---- narrow screens: one column, spine on the left ---- */
+
+@media (max-width: 700px) {
+    h2 {
+        font-size: 1.2em;
+    }
+
+    .strand-heads {
+        display: none;
+    }
+
+    .thread-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        /* fade the right edge so the row reads as scrollable */
+        -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+        mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    }
+
+    .timeline {
+        grid-template-columns: 1fr;
+        padding-left: 44px;
+        row-gap: 12px;
+    }
+
+    .timeline::before {
+        left: 22px;
+        transform: none;
+    }
+
+    .ev.side-cog,
+    .ev.side-ai,
+    .ev.side-both {
+        grid-column: 1;
+        width: auto;
+        justify-self: stretch;
+    }
+
+    .ev-year,
+    .side-both .ev-year {
+        position: static;
+        display: inline;
+        width: auto;
+        text-align: left;
+        margin: 0 8px 0 0;
+    }
+
+    .ev-tag {
+        display: inline;
+    }
+}

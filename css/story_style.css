@@ -1,0 +1,92 @@
+body {
+    font-family: courier, monospace;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+    line-height: 1.65;
+    color: #222;
+    background: #fff;
+}
+
+.top_link {
+    float: right;
+    margin-top: 12px;
+}
+
+header {
+    text-align: center;
+    padding-top: 30px;
+    clear: both;
+}
+
+h1 {
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    margin-top: 0;
+    color: #666;
+}
+
+.byline {
+    font-size: 0.85em;
+    color: #777;
+    max-width: 540px;
+    margin: 10px auto 0;
+}
+
+.byline a {
+    color: #555;
+}
+
+.story {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.story h2 {
+    margin-top: 64px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #666;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    text-align: center;
+}
+
+.story h2::before,
+.story h2::after {
+    content: '\2014';
+    color: #ccc;
+    margin: 0 10px;
+}
+
+.story p {
+    margin: 16px 0;
+}
+
+.story p.first::first-letter {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.story .space {
+    text-align: center;
+    color: #bbb;
+    margin: 28px 0;
+    letter-spacing: 0.5em;
+}
+
+.afterword {
+    margin-top: 70px;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+    font-size: 0.9em;
+    color: #555;
+}
+
+footer {
+    margin-top: 60px;
+    text-align: center;
+}

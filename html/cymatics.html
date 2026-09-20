@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>Cymatics</title>
+    <link rel="stylesheet" href="../css/cymatics_style.css">
+</head>
+<body>
+    <canvas id="plate" aria-label="A cloud of particles arranging itself into the pattern of the sound the microphone hears"></canvas>
+
+    <nav class="bar">
+        <a class="top_link" href="other_stuff.html">back</a>
+        <a class="about_link" id="aboutLink" href="#about" aria-expanded="false" aria-controls="about">about</a>
+    </nav>
+
+    <div class="start" id="start">
+        <h1>Cymatics</h1>
+        <p class="tag">the shape of sound</p>
+        <button id="listen" type="button">listen</button>
+        <p class="hint">uses your microphone, on this device only.<br>hum, sing, whistle. hold a note.</p>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <div class="readout" id="readout" aria-live="off" hidden>
+        <span id="rNote">&mdash;</span>
+        <span class="dim" id="rHz"></span>
+        <span class="dim" id="rMode"></span>
+        <span class="meter" aria-hidden="true"><span id="rLevel"></span></span>
+    </div>
+
+    <section class="about" id="about" hidden>
+        <div class="about_inner">
+            <a class="close" id="aboutClose" href="#">close</a>
+            <h2>About this page</h2>
+
+            <p>
+                In 1787 Ernst Chladni sprinkled sand on a metal plate, drew a violin bow along its edge, and
+                watched the sand leap away from the parts that were shaking and settle along the lines that
+                were still. Each pitch drew a different figure. The pictures were the first anyone had seen of
+                what a sound looks like, and people paid to watch him make them. Napoleon, reportedly,
+                remarked that Chladni had made sound visible. In the 1960s Hans Jenny filmed the same
+                phenomenon in powders, pastes, and liquids and named it <em>cymatics</em>, from the Greek for
+                wave.
+            </p>
+
+            <p>
+                This page is a plate you can bow with your voice. The particles are the sand. The sound is
+                whatever your microphone hears.
+            </p>
+
+            <h3>What you are seeing</h3>
+            <p>
+                A vibrating plate does not shake evenly. At any frequency it settles into a standing wave: some
+                regions swing up and down hard (the antinodes) and, between them, a web of lines stays perfectly
+                still (the nodes). Sand on the antinodes is thrown into the air and lands somewhere else; sand on
+                a node stays put. So the sand drifts, jump by jump, until it lies only on the lines that never
+                move. The figure you see is a map of the plate&rsquo;s silence.
+            </p>
+            <p>
+                The higher the pitch, the more waves fit across the plate, and the more intricate the figure.
+                Loudness does not change which figure appears; it changes how hard the sand is thrown, which
+                is why a quiet hum lets the pattern settle and a shout scatters it. Hold one steady note and the
+                cloud will find its shape. Slide the note up or down and you will watch one figure dissolve into
+                the next.
+            </p>
+
+            <h3>How it works</h3>
+            <p>
+                Everything runs in your browser, in a few hundred lines of plain JavaScript, with no libraries.
+            </p>
+            <ol>
+                <li>
+                    When you tap <em>listen</em>, the page asks for the microphone and feeds it into the Web
+                    Audio API&rsquo;s analyser node, which computes a Fourier transform of the last few
+                    milliseconds of sound about sixty times a second.
+                </li>
+                <li>
+                    From that spectrum it estimates the pitch you are making. A voice is not a pure tone; it is a
+                    fundamental plus a stack of overtones, and the loudest peak is often an overtone rather than
+                    the note itself. So the page uses a harmonic product spectrum: it multiplies each candidate
+                    frequency&rsquo;s energy by the energy at two and three times that frequency, which rewards
+                    the true fundamental. Loudness comes from the root-mean-square of the raw waveform, with a
+                    fast attack and slow release so that consonants do not make the plate flinch.
+                </li>
+                <li>
+                    Pitch, on a logarithmic scale from a low hum to a high whistle, selects a vibration mode. The
+                    figures use Chladni&rsquo;s own approximation for a square plate with free edges,
+                    <code>cos(n&pi;x)&middot;cos(m&pi;y) &plusmn; cos(m&pi;x)&middot;cos(n&pi;y)</code>, where the whole
+                    numbers <code>n</code> and <code>m</code> count the half-waves across the plate. A square plate
+                    can combine each pair of waves with either sign, and the two figures look quite different: with
+                    the minus sign the diagonals are always still, with the plus sign they never are. The page keeps
+                    a list of these modes ordered by how many waves they contain, and blends smoothly between
+                    neighbours as the pitch moves, so figures morph instead of snapping. A phone screen is taller
+                    than it is wide, so you are looking at a strip through the middle of a tall plate.
+                </li>
+                <li>
+                    Each particle evaluates that function and its gradient at its own position. It slides downhill
+                    toward the zero lines, and it is kicked in a random direction by an amount proportional to how
+                    hard the plate is vibrating where it stands, which is the loudness times the height of the
+                    wave there. That single rule, ordered slide plus disordered kick, is enough. The sand finds
+                    the nodes on its own, exactly as it does on a real plate. Particles thrown off the edge are
+                    poured back on at random.
+                </li>
+                <li>
+                    Drawing uses a 2D canvas with additive blending, so that where many particles pile up on a
+                    node the line glows, and a slight fade between frames instead of a full clear, so motion
+                    leaves a trace. Colour follows pitch. The particle count adapts to the size of the screen
+                    and drops if a frame ever takes too long, so it should stay smooth on a phone.
+                </li>
+            </ol>
+            <p>
+                If the microphone is unavailable, or you would rather play the plate by hand, drag a finger
+                across the screen: left to right is low to high, and higher on the screen is louder.
+            </p>
+
+            <h3>What it is not</h3>
+            <p>
+                A real plate obeys the biharmonic equation, and its true mode shapes depend on the material,
+                the thickness, and exactly how it is held. The cosine formula above is a good likeness of the
+                simplest cases, not a physical simulation. A real voice, too, would excite several modes at
+                once. This page picks one pitch and one figure at a time because that is what makes the
+                connection between what you sing and what you see immediate.
+            </p>
+
+            <h3>Privacy</h3>
+            <p>
+                The microphone stream is analysed on your device and discarded, frame by frame. Nothing is
+                recorded, stored, or sent anywhere. The page has no server, no analytics, and no network
+                requests beyond loading itself. You can confirm this by reading the source, which is short.
+            </p>
+
+            <h3>How it was made</h3>
+            <p>
+                Written by Claude, Anthropic&rsquo;s model, working in a Claude Code session at the site
+                owner&rsquo;s request: three files, one each of HTML, CSS, and JavaScript, tested headlessly in
+                Chromium with a synthesised tone sweep standing in for a microphone, then pushed to this GitHub
+                Pages site. The owner asked for a visual work well suited to a phone, a cloud of particles
+                shaped by sound, in the spirit of cymatics. The rest is Chladni&rsquo;s.
+            </p>
+
+            <p class="foot"><a href="other_stuff.html">back to stuff</a></p>
+        </div>
+    </section>
+
+    <script src="../js/cymatics.js"></script>
+</body>
+</html>

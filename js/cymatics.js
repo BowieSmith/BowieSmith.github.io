@@ -76,7 +76,7 @@
     /* ---------- sound state ---------- */
     var actx = null, analyser = null, stream = null;
     var freqBuf = null, timeBuf = null;
-    var micOn = false, micFailed = false;
+    var micOn = false;
     var freq = 220, level = 0;           /* current estimate */
     var freqS = 220, levelS = 0;         /* smoothed */
     var idxS = pitchToIndex(220);        /* smoothed mode index */
@@ -169,20 +169,29 @@
             showToast('listening. hum, sing, or whistle, and hold the note.', 4200);
             keepAwake();
         }).catch(function (err) {
-            var why = (err && err.name === 'NotAllowedError') ? 'microphone permission was refused.' :
-                      (err && err.name === 'NotFoundError') ? 'no microphone was found.' :
-                      'the microphone could not be opened.';
-            micFail(why + ' drag on the screen to play the plate by hand.');
+            var name = err && err.name;
+            var why;
+            if (name === 'NotAllowedError' || name === 'SecurityError') {
+                why = 'the microphone was refused. if no prompt appeared, this is probably an in-app browser: ' +
+                      'open the page in Safari or Chrome itself. in Safari, tap AA in the address bar, ' +
+                      'website settings, microphone, allow. then tap listen again.';
+            } else if (name === 'NotFoundError') {
+                why = 'no microphone was found.';
+            } else if (name === 'NotReadableError') {
+                why = 'another app is using the microphone. close it and tap listen again.';
+            } else {
+                why = 'the microphone could not be opened. tap listen to try again.';
+            }
+            micFail(why + ' or drag on the screen to play the plate by hand.');
         });
     }
 
     function micFail(msg) {
-        micFailed = true;
+        /* keep the intro and the button so a retry is one tap away */
         listenBtn.disabled = false;
         listenBtn.textContent = 'listen';
-        startBox.classList.add('gone');
         readout.hidden = false;
-        showToast(msg, 7000);
+        showToast(msg, 14000);
     }
 
     function keepAwake() {
@@ -273,7 +282,6 @@
         /* --- sound --- */
         if (touching) { freq = touchFreq; level = touchLevel; }
         else if (micOn) analyseMic();
-        else if (micFailed) level *= 0.96;
         else demoSignal(now - t0);
 
         /* smoothing: fast attack, slow release on level; pitch slews */

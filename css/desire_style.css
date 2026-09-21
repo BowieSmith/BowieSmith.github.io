@@ -182,3 +182,29 @@ footer {
     .essay h2 { letter-spacing: 0.12em; }
     .essay h2::before, .essay h2::after { margin: 0 6px; }
 }
+
+.grid {
+    border-collapse: collapse;
+    margin: 0 auto 1.5em;
+    font-size: 0.9em;
+}
+
+.grid th, .grid td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.grid th {
+    font-weight: normal;
+    color: #555;
+    background: #fafafa;
+}
+
+.grid td em {
+    display: block;
+    color: #777;
+    font-size: 0.9em;
+    margin-top: 2px;
+}

@@ -1,0 +1,32 @@
+# Binary / system dependencies for the site. JavaScript libraries live in
+# package.json and are installed by pnpm. Run `mise install` once.
+
+[settings]
+lockfile = true            # keep mise.lock (resolved versions + checksums); commit it
+
+[tools]
+node = "24"                # Node 24, the active LTS line
+pnpm = "12"                # standalone pnpm binary, no node needed to install it
+
+# SBCL (Steel Bank Common Lisp) trains the digit network in lisp/train.lisp.
+# It has no entry in the mise registry and no GitHub release assets, and the
+# newest macOS arm64 binary SBCL itself publishes is 2.4.0, so it is fetched
+# from SourceForge with the http backend. 2.4.0 (December 2023) is more than
+# enough for this; brew has newer versions if you ever need one.
+[tools."http:sbcl"]
+version = "2.4.0"
+format = "tar.bz2"
+# The tarball is SBCL's build tree, not a bin/ prefix. install.sh turns it into
+# bin/sbcl + lib/sbcl/{sbcl.core,contrib}; the runtime finds its core relative
+# to the binary, so no SBCL_HOME is needed. Guarded so it is safe to re-run.
+postinstall = """
+cd "$MISE_TOOL_INSTALL_PATH"
+if [ ! -x bin/sbcl ]; then
+  INSTALL_ROOT="$MISE_TOOL_INSTALL_PATH" sh install.sh >/dev/null
+  rm -rf src output obj contrib doc install.sh run-sbcl.sh find-gnumake.sh sbcl-pwd.sh
+fi
+"""
+
+[tools."http:sbcl".platforms]
+macos-arm64 = { url = "https://downloads.sourceforge.net/project/sbcl/sbcl/{{version}}/sbcl-{{version}}-arm64-darwin-binary.tar.bz2", checksum = "sha256:1d01fac2d9748f769c9246a0a11a2c011d7843337f8f06ca144f5a500e10c117" }
+linux-x64 = { url = "https://downloads.sourceforge.net/project/sbcl/sbcl/{{version}}/sbcl-{{version}}-x86-64-linux-binary.tar.bz2" }

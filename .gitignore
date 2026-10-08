@@ -1,2 +1,12 @@
 # vim stuff
 *.swp
+
+# JavaScript dependencies (pnpm); the site is served from the repository as-is
+node_modules/
+
+# MNIST download (47 MB); fetch it with `pnpm mnist`
+data/mnist/
+
+# mise local overrides
+mise.local.toml
+.mise.local.toml

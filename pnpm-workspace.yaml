@@ -1,0 +1,3 @@
+# pnpm settings. The pnpm version itself is pinned by mise (mise.toml), so pnpm
+# must never download a different copy of itself.
+pmOnFail: ignore

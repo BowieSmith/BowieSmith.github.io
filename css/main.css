@@ -1,50 +1,160 @@
+/* Home page: a plain list of artifacts, newest first.
+ * Monospace, black on white, like the site has always been. */
+
+:root {
+  --ink: #111;
+  --paper: #fff;
+  --muted: #666;
+  --rule: #ddd;
+  --link: #0b4ea2;
+  --human: #8a5a1a;
+  --ai: #2a6f97;
+  --both: #6d4c9f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e6e6e6;
+    --paper: #111;
+    --muted: #9a9a9a;
+    --rule: #333;
+    --link: #8ab4f8;
+    --human: #e0a35a;
+    --ai: #7cc4ea;
+    --both: #c3a6f0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  width: 70%;
-  margin: auto;
-  font-family: courier;
-  text-align: center;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem 3rem;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
 }
 
-#can:hover {
-  color: white;
-  text-shadow: 0 0 5px red;
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
-ul {
+a:hover {
+  text-decoration-style: dotted;
+}
+
+/* ---- header ---- */
+
+h1 {
+  font-size: 1.6rem;
+  font-weight: normal;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+}
+
+.intro {
+  color: var(--muted);
+  margin: 0 0 2.5rem;
+  max-width: 36rem;
+}
+
+/* ---- the list ---- */
+
+.artifacts {
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 
-li {
-  padding: 10px;
-  display: inline;
+.artifact {
+  border-top: 1px solid var(--rule);
+  padding: 1.4rem 0 1.6rem;
 }
 
-li:hover {
-  color: white;
-  text-shadow: 0 0 3px red;
-  cursor: cell;
+.artifact:last-child {
+  border-bottom: 1px solid var(--rule);
 }
 
-#canvasContainer {
-  margin: 50px;
-  display: inline;
+.meta {
+  margin: 0 0 0.3rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 
-canvas {
-  border: 2px solid grey;
+.meta > *:not(:last-child)::after {
+  content: "\00b7";
+  margin: 0 0.6em;
+  color: var(--muted);
 }
 
-.trail {
-  position: absolute;
-  height: 6px;
-  width: 6px;
+.made-by {
+  display: inline-block;
+  padding: 0 0.45em;
+  border: 1px solid currentColor;
   border-radius: 3px;
+  line-height: 1.5;
 }
 
-#content {
-  margin: 20px;
+.made-by.human { color: var(--human); }
+.made-by.ai    { color: var(--ai); }
+.made-by.both  { color: var(--both); }
+
+.artifact h2 {
+  font-size: 1.2rem;
+  font-weight: normal;
+  margin: 0;
+  line-height: 1.35;
 }
 
-.top_link {
-    float: right;
+.artifact h2 a {
+  color: var(--ink);
+}
+
+.artifact h2 a:hover {
+  color: var(--link);
+}
+
+.author {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.summary {
+  margin: 0.6rem 0 0;
+  max-width: 38rem;
+}
+
+/* ---- footer ---- */
+
+footer {
+  margin-top: 2.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+footer p {
+  margin: 0.4rem 0;
+}
+
+.legend .made-by {
+  margin-right: 0.3em;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 1.5rem;
+  }
+
+  .meta > *:not(:last-child)::after {
+    margin: 0 0.45em;
+  }
 }

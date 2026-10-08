@@ -1,0 +1,50 @@
+body {
+  width: 70%;
+  margin: auto;
+  font-family: courier;
+  text-align: center;
+}
+
+#can:hover {
+  color: white;
+  text-shadow: 0 0 5px red;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  display: inline;
+}
+
+li:hover {
+  color: white;
+  text-shadow: 0 0 3px red;
+  cursor: cell;
+}
+
+#canvasContainer {
+  margin: 50px;
+  display: inline;
+}
+
+canvas {
+  border: 2px solid grey;
+}
+
+.trail {
+  position: absolute;
+  height: 6px;
+  width: 6px;
+  border-radius: 3px;
+}
+
+#content {
+  margin: 20px;
+}
+
+.top_link {
+    float: right;
+}

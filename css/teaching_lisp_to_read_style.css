@@ -1,0 +1,624 @@
+/* Teaching Lisp to Read
+ * A long read with live Lisp cells in it. Serif for the prose, so it can be
+ * read for half an hour without tiring; monospace for anything Lisp says. */
+
+:root {
+  --ink: #1b1b1b;
+  --paper: #fdfcf9;
+  --muted: #6a6a6a;
+  --rule: #e3e0d8;
+  --accent: #2a6f97;
+  --ok: #2f7d4f;
+  --bad: #a33a2e;
+  --code-bg: #f4f2ec;
+  --cell-border: #d9d5ca;
+  --out-bg: #faf9f5;
+  --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Times New Roman", serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e4e2dc;
+    --paper: #151515;
+    --muted: #9a9890;
+    --rule: #2c2c2c;
+    --accent: #7cc4ea;
+    --ok: #7bc99a;
+    --bad: #e08a7e;
+    --code-bg: #1e1e1e;
+    --cell-border: #363636;
+    --out-bg: #191919;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  text-decoration-style: dotted;
+}
+
+.back_link {
+  position: absolute;
+  top: 1rem;
+  left: 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.back_link:hover {
+  color: var(--accent);
+}
+
+article {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 4.5rem 1rem 5rem;
+}
+
+/* ---- header ---- */
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.kicker .made-by {
+  display: inline-block;
+  padding: 0 0.45em;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  color: var(--accent);
+  line-height: 1.5;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 2.3rem;
+  line-height: 1.15;
+  margin: 0 0 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.byline {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 3rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---- prose ---- */
+
+h2 {
+  font-weight: normal;
+  font-size: 1.65rem;
+  line-height: 1.25;
+  margin: 3.6rem 0 1.2rem;
+}
+
+h2 .part {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  font-weight: normal;
+  font-size: 1.22rem;
+  margin: 2.6rem 0 0.8rem;
+}
+
+p {
+  margin: 0 0 1.15rem;
+}
+
+em {
+  font-style: italic;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 0.08em 0.32em;
+  border-radius: 3px;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+blockquote {
+  margin: 1.6rem 0;
+  padding: 0 0 0 1.1rem;
+  border-left: 2px solid var(--rule);
+  color: var(--ink);
+}
+
+blockquote p {
+  margin-bottom: 0.5rem;
+}
+
+blockquote cite {
+  display: block;
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+ul, ol {
+  padding-left: 1.4rem;
+}
+
+li {
+  margin-bottom: 0.4rem;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 3rem auto;
+  width: 6rem;
+}
+
+.aside {
+  font-size: 0.95rem;
+  color: var(--muted);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.9rem 0;
+  margin: 1.8rem 0;
+}
+
+.aside p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- live Lisp cells ---- */
+
+.cell {
+  margin: 1.5rem 0 1.7rem;
+  border: 1px solid var(--cell-border);
+  border-radius: 6px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.cell textarea {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  padding: 0.85rem 1rem 0.7rem;
+  resize: none;
+  outline: none;
+  tab-size: 2;
+  overflow: hidden;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.cell:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.cell .bar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.35rem 0.6rem 0.35rem 1rem;
+  border-top: 1px solid var(--cell-border);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.cell .bar .hint {
+  margin-left: auto;
+}
+
+button {
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--cell-border);
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.cell .output {
+  margin: 0;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--cell-border);
+  background: var(--out-bg);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 24rem;
+  overflow: auto;
+}
+
+.cell .output:empty {
+  display: none;
+}
+
+.cell .output .value {
+  color: var(--accent);
+}
+
+.cell .output .error {
+  color: var(--bad);
+}
+
+.cell .output .note {
+  color: var(--muted);
+}
+
+.cell.running .bar {
+  color: var(--accent);
+}
+
+/* ---- status pill ---- */
+
+#lisp_status {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px solid var(--cell-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+#lisp_status.ready { color: var(--ok); }
+#lisp_status.failed { color: var(--bad); }
+
+#lisp_status.quiet {
+  opacity: 0.35;
+  transition: opacity 1.5s ease;
+}
+
+#lisp_status.quiet:hover {
+  opacity: 1;
+}
+
+/* ---- the digit demos ---- */
+
+.panel {
+  margin: 1.6rem 0 2rem;
+  border: 1px solid var(--cell-border);
+  border-radius: 6px;
+  padding: 1rem 1.1rem;
+  background: var(--out-bg);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.panel h4 {
+  margin: 0 0 0.8rem;
+  font-weight: normal;
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.panel .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  margin-bottom: 0.7rem;
+}
+
+.panel .row:last-child {
+  margin-bottom: 0;
+}
+
+.panel .readout {
+  color: var(--ink);
+}
+
+.panel .readout b {
+  font-weight: normal;
+  color: var(--accent);
+}
+
+.digits {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.6rem 0.5rem;
+}
+
+#mistakes {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.digit {
+  text-align: center;
+  line-height: 1.2;
+}
+
+.digit canvas {
+  display: block;
+  width: 100%;
+  max-width: 56px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  image-rendering: pixelated;
+  border-radius: 3px;
+  background: #000;
+}
+
+.digit .label {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.digit .label.right { color: var(--ok); }
+.digit .label.wrong { color: var(--bad); }
+
+canvas.spark {
+  display: block;
+  width: 100%;
+  height: 80px;
+  border-radius: 3px;
+  background: var(--code-bg);
+}
+
+.panel .note,
+.panel .caption {
+  margin: 0.7rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.panel .note:empty {
+  display: none;
+}
+
+/* the 64 hidden neurons, as pictures */
+
+.neurons {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  max-width: 420px;
+}
+
+.neurons canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  image-rendering: pixelated;
+  border-radius: 2px;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+  width: 10rem;
+}
+
+/* draw pad */
+
+.drawpad {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.2rem 1.6rem;
+  align-items: start;
+}
+
+#pad {
+  display: block;
+  width: 252px;
+  height: 252px;
+  border-radius: 6px;
+  background: #000;
+  cursor: crosshair;
+  touch-action: none;
+  border: 1px solid var(--cell-border);
+}
+
+.pad_tools {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.sees {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+#seen {
+  display: block;
+  width: 84px;
+  height: 84px;
+  image-rendering: pixelated;
+  border-radius: 3px;
+  background: #000;
+  border: 1px solid var(--cell-border);
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: 1.4em 1fr 3.4em;
+  gap: 0.25rem 0.6rem;
+  align-items: center;
+}
+
+.bars .d {
+  color: var(--ink);
+  text-align: right;
+}
+
+.bars .track {
+  height: 0.75rem;
+  background: var(--code-bg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bars .fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.15s ease;
+}
+
+.bars .top .fill { background: var(--ok); }
+.bars .pct { text-align: right; }
+
+.verdict {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  color: var(--ink);
+  margin: 0 0 0.8rem;
+  min-height: 1.6em;
+}
+
+@media (hover: none) {
+  .cell .bar .hint {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  article {
+    padding-top: 3.6rem;
+  }
+
+  .cell textarea,
+  .cell .output {
+    font-size: 0.8rem;
+  }
+
+  #lisp_status.quiet {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .drawpad {
+    grid-template-columns: 1fr;
+  }
+
+  #pad {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .digits {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  #mistakes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---- about box ---- */
+
+.about {
+  margin-top: 3.5rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.4rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.about h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.8rem;
+  color: var(--ink);
+}
+
+.about p {
+  margin-bottom: 0.7rem;
+}

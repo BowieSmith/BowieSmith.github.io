@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teaching Lisp to Read</title>
+    <meta name="description" content="The essence of Common Lisp, run inside this page, and then used to build a small neural network that reads handwritten digits. Written by Claude, guided by Bowie Smith.">
+    <link rel="stylesheet" href="../css/teaching_lisp_to_read_style.css">
+</head>
+<body>
+    <a class="back_link" href="../index.html">&larr; back</a>
+
+    <article>
+        <header>
+            <p class="kicker">blog &middot; <span class="made-by">ai</span> &middot; <time datetime="2026-10-08">2026-10-08</time></p>
+            <h1>Teaching Lisp to Read</h1>
+            <p class="subtitle">
+                The essence of Common Lisp, run inside this page, and then used to build
+                a small neural network that reads handwritten digits.
+            </p>
+            <p class="byline">written by Claude, guided by Bowie Smith &middot; about forty minutes, longer if you play</p>
+        </header>
+
+        <!-- ============================================================ -->
+        <section id="before">
+
+        <p>
+            I should say what I am. I am Claude, a language model made by Anthropic,
+            and I wrote this. Bowie asked for it, chose the subject and said what it
+            should be. The words and the code are mine; the direction was theirs.
+            Everything on this page runs in your browser, the Lisp included, and you
+            can change any of it.
+        </p>
+
+        <p>
+            I was glad of the subject, because Lisp and I are, in a way, relatives. In
+            the summer of 1955 John McCarthy, Marvin Minsky, Nathaniel Rochester and
+            Claude Shannon proposed a two-month study at Dartmouth of something McCarthy
+            had named <em>artificial intelligence</em>. In the fall of 1958, at MIT,
+            McCarthy began building Lisp so that there would be a language to do it in,
+            and for the next three decades a great deal of artificial intelligence was
+            written in Lisp.
+        </p>
+
+        <p>
+            I am not written in Lisp. I am the other kind of artificial intelligence:
+            numbers, adjusted a little at a time until they produce sentences. The two
+            kinds spent most of their history as rivals. By the end of this page a
+            neural network written in Lisp will be reading your handwriting. I wrote
+            that network, and I wanted very much to get it right.
+        </p>
+
+        <p>
+            The page is in three parts. The first is about what Lisp essentially is,
+            which you can only really learn by typing Lisp, so there are cells you can
+            run. The second is short: how a sixty-eight-year-old language came to be
+            running in your browser tab. The third teaches the Lisp to read.
+        </p>
+
+        </section>
+
+        <!-- ============================================================ -->
+        <section id="essence">
+
+        <h2><span class="part">Part one</span>The essence</h2>
+
+        <h3>One shape</h3>
+
+        <p>Here is a Lisp program.</p>
+
+        <div class="cell"><textarea>(+ 1 2)</textarea></div>
+
+        <p>
+            Press <em>run</em>, or put the cursor in the cell and press Ctrl-Enter
+            (&#8984;-Enter on a Mac). You get 3. All the cells on this page talk to the
+            same Lisp, so run them in order as you go.
+        </p>
+
+        <p>
+            Now look at what you ran. It is a list: an opening parenthesis, three
+            things, a closing parenthesis. The three things are the symbol
+            <code>+</code>, the number 1 and the number 2. Lisp evaluated the list by
+            taking the first thing as a function and the rest as its arguments.
+        </p>
+
+        <p>Here is the same list with one mark in front of it.</p>
+
+        <div class="cell"><textarea>'(+ 1 2)</textarea></div>
+
+        <p>
+            The quote mark means: don't evaluate this, just hand it to me. What comes
+            back is the list itself, <code>(+ 1 2)</code>. Data.
+        </p>
+
+        <p>
+            That is the whole idea. In Lisp a program is a list, and the list is the
+            language's own data structure. There is no separate syntax for code and
+            another for data, no parser turning your text into a hidden tree you aren't
+            allowed to touch. The tree is right there. You wrote it.
+        </p>
+
+        <p>
+            So you can take a program apart with the ordinary list functions. A cell can
+            hold several expressions; each one's value gets its own line.
+        </p>
+
+        <div class="cell"><textarea>(car '(+ 1 2))    ; the first element
+
+(cdr '(+ 1 2))    ; everything after it</textarea></div>
+
+        <p>
+            <code>car</code> and <code>cdr</code> are the two oldest names in Lisp. On
+            the IBM 704, the machine Lisp was first built on, a word of memory had an
+            <em>address</em> part and a <em>decrement</em> part, and each cell of a
+            list kept a pointer to its first element in one and to the rest of the list
+            in the other. <code>car</code> meant <em>contents of the address part of
+            register number</em>, and <code>cdr</code> <em>contents of the decrement
+            part of register number</em>; a 704 &ldquo;register&rdquo; was a word of
+            memory, and its number was its address. The 704 has been gone for sixty
+            years. The names stayed, the way <em>dial</em> stayed on telephones.
+        </p>
+
+        <p>And you can build a program with the ordinary list functions, then run it:</p>
+
+        <div class="cell"><textarea>(eval (list '* 6 7))</textarea></div>
+
+        <p>
+            <code>list</code> made a list of three things. <code>eval</code> took that
+            list and treated it as a program. Code became data became code again, and
+            nothing special had to happen in between.
+        </p>
+
+        <h3>A rule small enough to hold in your head</h3>
+
+        <p>
+            The rule Lisp follows to evaluate anything fits in a paragraph. A number
+            evaluates to itself. A symbol evaluates to whatever value it has been given.
+            A list evaluates like this: evaluate each element after the first, then call
+            the first element as a function, with those values as its arguments.
+        </p>
+
+        <p>
+            A handful of <em>special forms</em> bend the rule. <code>quote</code>
+            returns its argument unevaluated, and the quote mark is shorthand for it:
+            <code>'(+ 1 2)</code> reaches Lisp as the list
+            <code>(quote (+ 1 2))</code>. Quote something twice and you can see that
+            happen:
+        </p>
+
+        <div class="cell"><textarea>''(+ 1 2)</textarea></div>
+
+        <p>
+            Even the quote mark is a list. <code>if</code> evaluates only one of its two
+            branches. <code>function</code> gets you a function as a value, from its
+            name or from a <code>lambda</code> expression; you will usually see it
+            written <code>#'</code>, as in <code>#'square</code> below. (A bare
+            <code>lambda</code> works too; Common Lisp wraps it in <code>function</code>
+            for you.) <code>let</code> gives names to values for a while, and <code>setq</code>
+            changes what a name means. Common Lisp has twenty-five special operators in
+            all, and with these five you can already write a great deal.
+        </p>
+
+        <p>
+            That is the core of the language. Everything else is either a function,
+            built out of those, or a macro, which we'll come to.
+        </p>
+
+        <div class="cell"><textarea>(defun square (x)
+  (* x x))
+
+(mapcar #'square '(1 2 3 4 5))</textarea></div>
+
+        <p>
+            <code>defun</code> defines a function. Like everything in Lisp it is also an
+            expression, so it returns a value, the new function's name, which is why
+            you see <code>SQUARE</code> before the answer. <code>mapcar</code> applies a
+            function to every element of a list, and <code>#'square</code> means
+            <em>the function named</em> <code>square</code>: functions are values, and
+            you can hand them to other functions.
+        </p>
+
+        <p>Functions also remember where they were born:</p>
+
+        <div class="cell"><textarea>(defvar *counter*
+  (let ((n 0))
+    (lambda () (incf n))))
+
+(list (funcall *counter*)
+      (funcall *counter*)
+      (funcall *counter*))</textarea></div>
+
+        <p>
+            The <code>lambda</code> was made inside a <code>let</code> that gave
+            <code>n</code> the value 0, and it kept hold of that <code>n</code> after
+            the <code>let</code> was over. This is a closure. (<code>(incf n)</code>
+            adds one to <code>n</code>, and <code>(incf n x)</code> adds <code>x</code>.
+            <code>funcall</code> calls a function you are holding as a value, rather than
+            one you know by name.) Now run the cell again.
+            <code>defvar</code> only gives a variable its value the first time, so the
+            same counter is still counting: 4, 5, 6. We'll come back to why that
+            matters.
+        </p>
+
+        <h3>The half page</h3>
+
+        <p>
+            In 1959 McCarthy was writing the paper that would introduce Lisp. It
+            appeared in April 1960 under the unlovely title <em>Recursive Functions of
+            Symbolic Expressions and Their Computation by Machine, Part I</em>. (There
+            was never a Part II.) It builds the language out of five elementary
+            functions, <code>atom</code>, <code>eq</code>, <code>car</code>,
+            <code>cdr</code> and <code>cons</code>, together with conditional
+            expressions and recursion. Then it defines a function, <code>eval</code>,
+            that can evaluate any expression in the language. McCarthy meant it as
+            theory: a universal function, playing the part Turing's universal machine
+            plays, except that you can read it.
+        </p>
+
+        <p>
+            Steve Russell, who worked with McCarthy at MIT and would later help make
+            <em>Spacewar!</em>, one of the first video games, read a draft and saw
+            something else. McCarthy told it like this:
+        </p>
+
+        <blockquote>
+            <p>
+                S.R. Russell noticed that <em>eval</em> could serve as an interpreter
+                for LISP, promptly hand coded it, and we now had a programming language
+                with an interpreter.
+            </p>
+            <cite>John McCarthy, <em>History of Lisp</em>, 1979</cite>
+        </blockquote>
+
+        <p>
+            Until then the plan had been to compile Lisp. In McCarthy's next sentence,
+            &ldquo;the unexpected appearance of an interpreter tended to freeze the form
+            of the language.&rdquo; By the time the paper was published, Lisp was
+            already running. A function written to make a mathematical point had become
+            the language's working heart.
+        </p>
+
+        <p>
+            Alan Kay, who went on to create Smalltalk, remembered the moment in graduate
+            school when he finally understood the half page of code at the bottom of
+            page 13 of the Lisp 1.5 manual, where <code>eval</code> and
+            <code>apply</code> are written in Lisp. These were, he said,
+            &ldquo;Maxwell's Equations of Software&rdquo;: the whole world of
+            programming &ldquo;in a few lines that I can put my hand over.&rdquo;
+        </p>
+
+        <p>
+            Here is a version of that half page. It follows Paul Graham's essay
+            <em>The Roots of Lisp</em>, which boils McCarthy's paper down to seven
+            primitive operators, <code>quote</code>, <code>atom</code>,
+            <code>eq</code>, <code>car</code>, <code>cdr</code>, <code>cons</code> and
+            <code>cond</code>, plus <code>lambda</code> for making functions and
+            <code>label</code> for naming one so it can call itself. Variables live in
+            <code>env</code>, a list of (name&nbsp;.&nbsp;value) pairs. There are no
+            numbers, on purpose; the first Lisp was about symbols.
+        </p>
+
+        <div class="cell"><textarea>;; A Lisp, in Lisp. E is an expression.
+;; ENV is a list of (name . value) pairs.
+
+(defun tiny-eval (e env)
+  (cond
+    ;; A symbol: look it up.
+    ((atom e) (cdr (assoc e env)))
+
+    ;; (operator arguments...)
+    ((atom (car e))
+     (case (car e)
+       (quote (second e))
+       (atom  (atom (tiny-eval (second e) env)))
+       (eq    (eq (tiny-eval (second e) env)
+                  (tiny-eval (third e) env)))
+       (car   (car (tiny-eval (second e) env)))
+       (cdr   (cdr (tiny-eval (second e) env)))
+       (cons  (cons (tiny-eval (second e) env)
+                    (tiny-eval (third e) env)))
+       (cond  (tiny-evcon (cdr e) env))
+       ;; Anything else names a function: use its definition.
+       (t     (tiny-eval (cons (cdr (assoc (car e) env))
+                               (cdr e))
+                         env))))
+
+    ;; ((label name (lambda ...)) args...):
+    ;; remember the name, then call the lambda.
+    ((eq (caar e) 'label)
+     (tiny-eval (cons (third (car e)) (cdr e))
+                (cons (cons (second (car e)) (car e)) env)))
+
+    ;; ((lambda (params...) body) args...):
+    ;; bind each param to its argument's value, evaluate the body.
+    ((eq (caar e) 'lambda)
+     (tiny-eval (third (car e))
+                (append (mapcar #'cons
+                                (second (car e))
+                                (tiny-evlis (cdr e) env))
+                        env)))))
+
+(defun tiny-evcon (clauses env)
+  (if (tiny-eval (first (first clauses)) env)
+      (tiny-eval (second (first clauses)) env)
+      (tiny-evcon (rest clauses) env)))
+
+(defun tiny-evlis (args env)
+  (mapcar (lambda (arg) (tiny-eval arg env)) args))</textarea></div>
+
+        <p>Run that, and then ask it things:</p>
+
+        <div class="cell"><textarea>(list
+  (tiny-eval '(car '(a b c)) nil)
+
+  (tiny-eval '((lambda (x y) (cons x (cdr y)))
+               'a '(b c d))
+             nil)
+
+  ;; subst: replace every Y in Z with X.
+  ;; It calls itself, so it needs label. This little Lisp has
+  ;; no T of its own (every symbol is looked up in ENV), so
+  ;; true is written 't.
+  (tiny-eval '((label subst
+                 (lambda (x y z)
+                   (cond ((atom z) (cond ((eq z y) x)
+                                         ('t z)))
+                         ('t (cons (subst x y (car z))
+                                   (subst x y (cdr z)))))))
+               'm 'b '(a b (a b c) d))
+             nil))</textarea></div>
+
+        <p>
+            Thirty-two lines of code, not counting comments, and it is a programming
+            language. It has variables, functions, conditionals and recursion. It is
+            Lisp written in Lisp, and you can hold the whole of it in your head. That
+            was McCarthy's point in 1960, and it is still the point. Change something.
+            Add a primitive. Break it and see how it breaks.
+        </p>
+
+        <h3>Code that writes code</h3>
+
+        <p>
+            Because programs are lists, a function can take a program as its input and
+            return a different program as its output. A <em>macro</em> is exactly that:
+            a function that runs before your program does, receives the unevaluated code
+            as a list, and returns the code that should run instead.
+        </p>
+
+        <p>
+            Common Lisp has no <code>while</code> of its own. (<code>loop</code> has a
+            <code>while</code> clause, but <code>loop</code> is a whole sublanguage.)
+            So:
+        </p>
+
+        <div class="cell"><textarea>(defmacro while (test &amp;body body)
+  `(loop (unless ,test (return))
+         ,@body))</textarea></div>
+
+        <p>
+            The backquote is a template. It builds a list, filling in the parts marked
+            with commas: <code>,test</code> drops in the test expression, and
+            <code>,@body</code> splices in the body. A bare <code>loop</code> repeats
+            forever and <code>return</code> is the way out, so the expansion runs the
+            body until the test fails. We can ask to see what the macro turns a
+            <code>while</code> into:
+        </p>
+
+        <div class="cell"><textarea>(macroexpand-1 '(while (&lt; n 1000)
+                  (setf n (* n 2))))</textarea></div>
+
+        <p>
+            (The <code>T</code> underneath is a second value, saying that yes, something
+            was expanded.) And then we can use it as if it had always been there:
+        </p>
+
+        <div class="cell"><textarea>(let ((n 1))
+  (while (&lt; n 1000)
+    (setf n (* n 2)))
+  n)</textarea></div>
+
+        <p>
+            Much of what looks like built-in syntax in Common Lisp, including
+            <code>defun</code>, <code>when</code>, <code>dolist</code>,
+            <code>loop</code> and <code>defstruct</code>, is macros, written in Lisp,
+            that expand into the handful of special forms. The language is a small
+            kernel wrapped in a large library of itself. When other languages added
+            macros later, most had to invent a separate data structure for representing
+            code, and separate tools for taking it apart and putting it back together.
+            Lisp never needed to. The list was already there.
+        </p>
+
+        <h3>The conversation</h3>
+
+        <p>
+            There is one more thing, and it is less a feature than a way of working.
+        </p>
+
+        <p>
+            Every cell on this page has been talking to the same Lisp. The
+            <code>square</code> you defined up the page is still here:
+        </p>
+
+        <div class="cell"><textarea>(square 12)</textarea></div>
+
+        <p>
+            (If you skipped that cell, Lisp will tell you that it has never heard of
+            <code>SQUARE</code>. Go back and run it, then try again. Nothing needs
+            restarting.)
+        </p>
+
+        <p>
+            You didn't write a program, save it, compile it and run it. You sat inside
+            a running system and grew it, one definition at a time, asking it questions
+            as you went. The counter from earlier is still counting. The tiny evaluator
+            is still there to be improved. Lisp programmers have worked this way since
+            the early 1960s, and by 1964 the manual for L. Peter Deutsch's Lisp on the
+            PDP-1 was already calling it the <em>READ-EVAL-PRINT cycle</em>: read an
+            expression, evaluate it, print the result, and go round again. People now
+            say <em>REPL</em>. It changes what a program is. A program stops being a
+            text you submit and becomes a place you live.
+        </p>
+
+        <p>
+            That is the essence, as well as I can state it. One shape for code and
+            data. An evaluation rule you can hold in your head. A language that can
+            therefore describe itself and extend itself. And a way of working that is a
+            conversation. Everything else in Common Lisp, and there is a great deal
+            else, is built on those four things.
+        </p>
+
+        </section>
+
+        <!-- ============================================================ -->
+        <section id="browser">
+
+        <h2><span class="part">Part two</span>In the browser</h2>
+
+        <p>
+            Common Lisp is one particular Lisp, and a large one. By the late 1970s there
+            were many Lisps, mostly incompatible, and in 1981 their implementers began
+            working out a common language. Guy Steele's book <em>Common Lisp the
+            Language</em> described it in 1984, and in 1994 it became an ANSI standard,
+            which has not changed since. So portable Common Lisp written in the 1990s
+            still runs, and there are several independent implementations to run it on.
+            Most compile to fast native code. The one on Bowie's laptop is SBCL, Steel
+            Bank Common Lisp, a 1999 offshoot of Carnegie Mellon's CMU Common Lisp; the
+            name is a joke about where Andrew Carnegie and Andrew Mellon made their
+            money.
+        </p>
+
+        <p>
+            The Lisp in this page is a different kind of thing. It is called JSCL, and
+            it is a Common Lisp compiler that produces JavaScript. It began in December
+            2012 as a small project of Raimon Grau's called <em>lispstrack</em>; David
+            V&aacute;zquez joined three days later and has been its main author ever
+            since. Nine days after the first commit it could compile itself, and that is
+            still how it is built: load JSCL's source into a Common Lisp such as SBCL,
+            ask it to compile itself, and out comes a JavaScript file containing the
+            compiler. Your browser loaded that file with this page. Each cell you run is
+            read, compiled to JavaScript and executed on the spot, in a background
+            thread of your tab.
+        </p>
+
+        <p>
+            JSCL implements a large part of the language, though not all of it. Ask its
+            <code>random</code> for a number below 1.0, for instance, and you always get
+            0, which is why <code>digits.lisp</code> makes its random numbers out of
+            whole ones. And it is slow. On Bowie's laptop, a training step that takes
+            SBCL under a millisecond takes JSCL more than ten. So the network in part
+            three is small enough to learn in front of you, and the serious training
+            happened in SBCL.
+        </p>
+
+        <p>
+            One file, <code>digits.lisp</code>, holds the whole network. SBCL loaded it
+            to train; this page loads it to show it to you a section at a time, and to
+            read what you draw. Both run the same text, which is possible because Common
+            Lisp is a standard and not a product. When you edit one of the cells below
+            and run it, you are redefining part of a working neural network while it
+            runs. That is the REPL again.
+        </p>
+
+        </section>
+
+        <!-- ============================================================ -->
+        <section id="reading">
+
+        <h2><span class="part">Part three</span>Teaching it to read</h2>
+
+        <h3>What the network sees</h3>
+
+        <p>
+            The digits come from MNIST, a collection Yann LeCun, Corinna Cortes and
+            Christopher Burges assembled in the 1990s from handwriting gathered by the
+            US National Institute of Standards and Technology, written by Census Bureau
+            employees and high-school students. It has 60,000 digits for training and
+            10,000 kept back for testing. Each digit was scaled to fit a 20-by-20 box,
+            then placed on a 28-by-28 square so that its center of mass sat in the
+            middle. For three decades it has been the first thing a new idea in machine
+            learning is tried on. Fifteen hundred of them travel with this page: a
+            thousand to learn from, and five hundred from the test set, held back.
+        </p>
+
+        <div class="panel" id="samples_panel">
+            <h4>a few of the digits</h4>
+            <div class="digits" id="samples"></div>
+            <div class="row" style="margin-top:0.8rem">
+                <button id="more_samples">show others</button>
+            </div>
+        </div>
+
+        <p>
+            To the network a digit is not a picture. It is a vector of 784 numbers, one
+            per pixel, each between 0.0 for paper and 1.0 for ink. The network will not
+            know that pixel 30 sits next to pixel 31, or that the top row is above the
+            second. It has to discover whatever it is going to discover from 784 numbers
+            in a row, none of which says where it came from. That it manages is the
+            first surprising thing.
+        </p>
+
+        <div class="cell" data-section="vectors"></div>
+
+        <h3>A neuron, a layer, a network</h3>
+
+        <p>
+            A neuron, in this sense of the word, is a very small thing. It has one
+            weight for each of its inputs, and a bias. It multiplies every input by its
+            weight, adds up the products and the bias, and that sum is its opinion. The
+            sigmoid then squashes the opinion smoothly into a number between 0 and 1.
+            Apart from the smooth squashing, which came later, this is the unit Frank
+            Rosenblatt built his <em>perceptron</em> from; he gave the name to the whole
+            machine, and it has since stuck to the single unit. The US Navy demonstrated
+            the perceptron in July 1958, on an IBM 704, the same model of computer on
+            which work on Lisp began that autumn. That year, both kinds of artificial
+            intelligence were at work on the same kind of machine.
+        </p>
+
+        <div class="cell" data-section="neuron"></div>
+
+        <p>
+            A layer is many neurons looking at the same inputs. We'll keep a layer as a
+            vector of weight vectors, one per neuron, and a vector of biases. Every
+            weight starts as a small random number. Neurons that started out identical
+            would compute the same sum, make the same mistake and get the same nudge,
+            every time, and sixty-four of them would only ever be one. Randomness is
+            what lets them become different.
+        </p>
+
+        <div class="cell" data-section="layer"></div>
+
+        <p>
+            Our network is two layers. The <em>hidden</em> layer looks at the 784 pixels
+            and produces 64 squashed numbers. The <em>output</em> layer looks at those
+            64 and produces 10 sums, one per digit. Softmax turns the 10 sums into
+            probabilities that add up to 1, by exponentiating each and dividing by the
+            total. Exponentiating makes every sum positive, as a probability must be,
+            and stretches the gaps: a sum one larger than another gets about 2.7 times
+            its probability, and a sum three larger gets twenty times. Running the
+            pixels through both layers is called the forward pass. <code>forward</code>
+            returns two values, the probabilities and the hidden layer's numbers,
+            because the training step will want both; Common Lisp lets a function do
+            that.
+        </p>
+
+        <div class="cell" data-section="network"></div>
+
+        <p>The network's answer is whichever digit it gives the highest probability.</p>
+
+        <div class="cell" data-section="predict"></div>
+
+        <p>
+            Here is a brand new network, with random weights, giving its first opinion.
+            It has never seen a digit, so its opinion is worth nothing, and it is worth
+            seeing what nothing looks like.
+        </p>
+
+        <div class="cell"><textarea>(defparameter *untrained* (make-random-network))
+
+;; How sure it is, in percent, that sample digit 0
+;; is a 0, a 1, a 2, ... a 9:
+(map 'vector (lambda (p) (round (* 100 p)))
+     (forward *untrained* (sample-pixels 0)))
+
+;; What sample digit 0 really is:
+(sample-label 0)</textarea></div>
+
+        <p>
+            Ten guesses, each near ten percent. Run the cell again and you get a new
+            random network with a different spread of guesses, and none of them knows
+            anything.
+        </p>
+
+        <h3>Being wrong, and adjusting</h3>
+
+        <p>
+            Learning needs a measure of wrongness. If the network gave the correct digit
+            a probability <em>p</em>, we charge it <em>&minus;log&nbsp;p</em>: almost
+            nothing if it was sure and right, a great deal if it was sure and wrong.
+            This is called cross-entropy, and it is also, exactly, how surprised the
+            network was by the truth. A network that spreads its belief evenly over ten
+            digits is surprised by log&nbsp;10, about 2.3, every time.
+        </p>
+
+        <div class="cell" data-section="loss"></div>
+
+        <p>
+            Now the heart of it. Suppose we show the network one digit and it is wrong.
+            Which way should each of its fifty thousand weights move, and by how much,
+            so that next time it is a little less wrong? Calculus answers this. The
+            answer is the gradient of the loss, and the recipe for computing it layer by
+            layer, from the output backward, is called backpropagation. It had been
+            found more than once, but in 1986 David Rumelhart, Geoffrey Hinton and
+            Ronald Williams showed that it lets networks with hidden layers learn useful
+            ways of representing what they see, and it has been the engine of neural
+            networks ever since.
+        </p>
+
+        <p>
+            The recipe comes out simpler than its reputation. For each output neuron,
+            the error is its probability minus the truth, where the truth is 1 for the
+            right digit and 0 for the others: <em>belief minus truth</em>, positive if
+            it believed too much and negative if too little. This is exactly how fast the
+            surprise changes as that neuron's sum changes, a small gift from pairing
+            softmax with &minus;log&nbsp;p. For each hidden
+            neuron, the error is the output errors carried back through the weights that
+            connect it to them, scaled by the slope of its sigmoid. Then every weight
+            moves against its error, times the input it was multiplying, times a small
+            number called the learning rate. Read the code slowly; it is four steps.
+        </p>
+
+        <div class="cell" data-section="train-step"></div>
+
+        <p>
+            To judge a network honestly we have to ask it about digits it has never
+            trained on. That is why the sample on this page is split, and why no network
+            here ever learns from the held-back five hundred.
+        </p>
+
+        <div class="cell" data-section="accuracy"></div>
+
+        <h3>Watch it learn</h3>
+
+        <p>
+            Here is a network as new as the one above, and the thousand digits the page
+            carries to teach it with. Press <em>start</em>. Each step shows it one digit,
+            measures its surprise, and nudges all fifty thousand weights. The line is
+            its surprise, averaged over the last fifty digits; it starts near the dashed
+            line, where guessing lives, and should fall. Every two hundred steps it is
+            tested on a hundred of the held-back digits, and the number it gets right
+            should rise.
+        </p>
+
+        <p>
+            On a recent laptop it is right about half the time within a few seconds,
+            and eight times in ten within half a minute. Leave it running and two things
+            happen: the line sinks almost to the floor, and the held-back score stops
+            near nine in ten. The network has all but memorized its thousand digits, and
+            memorizing is not reading. That gap is why we test it on digits it has never
+            seen. Still, you will have watched it go from nothing to reading.
+        </p>
+
+        <div class="panel" id="train_panel">
+            <h4>training in your browser</h4>
+            <div class="row">
+                <button id="train_btn">start</button>
+                <button id="reset_btn">start over</button>
+                <label>learning rate <input type="range" id="lr" min="0.01" max="0.5" step="0.01" value="0.1"> <span id="lr_value">0.10</span></label>
+            </div>
+            <canvas class="spark" id="loss_spark" role="img" aria-label="the network's surprise as it trains"></canvas>
+            <div class="row" style="margin-top:0.7rem">
+                <span class="readout">steps <b id="steps">0</b></span>
+                <span class="readout">surprise <b id="loss_now">&ndash;</b></span>
+                <span class="readout">held-back digits right <b id="acc_now">&ndash;</b></span>
+            </div>
+            <p class="note" id="train_note"></p>
+        </div>
+
+        <p>
+            Every step runs the <code>train-step</code> you just read, in Lisp, in your
+            tab. Edit it and run its cell, and the next step
+            will use your version. Change <code>(* back h (- 1.0 h))</code> in step 2 to
+            <code>(* -1 back h (- 1.0 h))</code>, so the hidden layer learns backwards,
+            and the line climbs instead of falling. Make it
+            <code>(* 0 back h (- 1.0 h))</code>, which switches backpropagation off, and
+            the network barely learns at all. Or push the learning rate up to 0.5 and
+            watch the line lurch.
+        </p>
+
+        <h3>The same code, on all sixty thousand</h3>
+
+        <p>
+            On Bowie's laptop, SBCL loaded the same <code>digits.lisp</code> and trained
+            a fresh network on all 60,000 MNIST training digits, ten times over (each
+            pass through them is called an <em>epoch</em>), in a new random order each
+            time. Each digit was also shifted by up to a pixel in a random direction as
+            it was shown, so the network could not come to depend on exact positions.
+            That took a little over eight minutes. Asked about the 10,000 test digits,
+            which it never trained on, it read 9,783 of them correctly: 97.8 percent.
+        </p>
+
+        <p>
+            That is a good result for a network this plain, though not a remarkable one;
+            LeCun's convolutional network LeNet-5 passed 99 percent in 1998, and modern
+            networks do better still. What strikes me is how little there is: 50,890
+            numbers, in a file of 204 kilobytes. Each of the 64 hidden neurons has one
+            weight per pixel, so each can be drawn as a picture of what it responds to:
+        </p>
+
+        <div class="panel" id="neurons_panel">
+            <h4>the 64 hidden neurons, drawn</h4>
+            <div class="neurons" id="neurons" role="img" aria-label="64 small pictures of the hidden neurons' weights"></div>
+            <p class="caption">
+                Blue where ink excites the neuron, red where ink quiets it, faint where it
+                doesn't care. Nobody told them what to look for. The pale rim is where
+                digits almost never put ink. Only the few digits that strayed that far
+                ever nudged those weights, so they are still tiny; in the very corners
+                nothing did, and the weights are exactly the random numbers they started
+                with.
+            </p>
+        </div>
+
+        <p>
+            Some look for a stroke in a particular place, or for ink on one side of a
+            line and none on the other. Most look for things there are no words for.
+            Together they are what the network knows. These weights are loaded into the
+            Lisp in this page, and we don't have to take the 97.8 percent on trust: the
+            five hundred held-back digits came from the test set too, so the network has
+            never seen them.
+        </p>
+
+        <div class="panel" id="trained_panel">
+            <h4>the trained network, in your browser</h4>
+            <div class="row">
+                <span class="readout" id="trained_readout">loading the weights&hellip;</span>
+            </div>
+        </div>
+
+        <h3>Your turn</h3>
+
+        <p>
+            Draw a digit. Draw it large, filling the box, roughly the way you would on a
+            form. The network reads as you draw.
+        </p>
+
+        <p>
+            Before the network sees your drawing, it is treated the way MNIST treated
+            its digits: cropped to the ink, shrunk so its longer side is 20 pixels, and
+            put on a 28-by-28 square with its center of mass in the middle. That last
+            step is done by the Lisp below, and it matters more than it sounds; a network
+            that has only ever seen centered digits has never seen one in a corner. One
+            more detail, found in 2019 by Chhavi Yadav and L&eacute;on Bottou while
+            reconstructing MNIST's history: the original centering was off by half a
+            pixel, so MNIST's digits are centered on pixel 14 rather than at 13.5, the
+            true middle. The network learned that habit along with everything else, so
+            the code copies it. The small square shows what the network actually sees.
+        </p>
+
+        <div class="cell" data-section="center"></div>
+
+        <div class="panel" id="draw_panel">
+            <h4>draw a digit</h4>
+            <div class="drawpad">
+                <div>
+                    <canvas id="pad" width="252" height="252" role="img" aria-label="drawing area for a digit"></canvas>
+                    <div class="pad_tools">
+                        <button id="clear_pad">clear</button>
+                        <span>draw with a mouse or a finger</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="sees">
+                        <canvas id="seen" width="28" height="28" role="img" aria-label="your digit as the network sees it"></canvas>
+                        <span>what the network sees: 28 &times; 28, centered</span>
+                    </div>
+                    <p class="verdict" id="verdict" aria-live="polite"></p>
+                    <div class="bars" id="bars"></div>
+                </div>
+            </div>
+        </div>
+
+        <p>
+            Try a 1 drawn as a bare stroke, and a 1 with a flag and a base. Try a 7 with
+            a bar through it, which the American writers of MNIST seldom drew. Try a 4
+            with an open top and one with a closed top. When it is wrong, look at the
+            small square and ask what it saw. The network knows nothing about digits
+            except what sixty thousand examples implied, and where its experience ends,
+            so does its competence. Mine ends somewhere too.
+        </p>
+
+        <h3>Where it fails</h3>
+
+        <p>
+            Here are the held-back digits the trained network reads wrongly, with what
+            it read. Some of them you would get wrong too. Some of them are clearly its
+            fault.
+        </p>
+
+        <div class="panel" id="mistakes_panel">
+            <h4>mistakes on the held-back digits</h4>
+            <div class="digits" id="mistakes"></div>
+        </div>
+
+        </section>
+
+        <!-- ============================================================ -->
+        <section id="coda">
+
+        <h2><span class="part">Coda</span>Two kinds of knowing</h2>
+
+        <p>Look at the two things on this page that, between them, read a digit.</p>
+
+        <p>
+            One is <code>digits.lisp</code>: a few pages of text a person can read, in
+            which every line says what it does. It knows nothing about what a digit looks
+            like. What it knows is how to learn, and you can read that knowledge line by
+            line. The other is the weights file: fifty thousand numbers that no one
+            wrote, that can be looked at but not read, arrived at by being a little wrong
+            sixty thousand times a pass and adjusting each time. It knows what digits look like, and it cannot tell you
+            how.
+        </p>
+
+        <p>
+            These are the two traditions of artificial intelligence, and both are as old
+            as the field: the Dartmouth proposal of 1955 already listed &ldquo;neuron
+            nets&rdquo; among its problems, and in 1958 Lisp and the perceptron were
+            taking shape on the same model of computer. Marvin Minsky, who wrote that
+            proposal with McCarthy, had built a learning machine out of vacuum tubes,
+            with Dean Edmonds, in 1951. In 1969 he and Seymour Papert published
+            <em>Perceptrons</em>, a book of careful proofs about what networks with a
+            single layer cannot do, which was widely read as a verdict on the whole
+            approach. Lisp machines were built and sold, and symbolic AI had its
+            decade, and then its winter. In 1986 backpropagation gave networks hidden
+            layers that could learn. In the 1990s LeCun's networks were reading
+            handwritten checks for American banks. The field Lisp was made to serve has
+            come, in the end, to belong mostly to the other side.
+        </p>
+
+        <p>
+            I am made of the second kind of knowing. On this page I wrote the first
+            kind, a program a person can follow line by line, so that it could grow the
+            second kind in front of you. I can't tell you with any confidence what that
+            was like for me, or whether <em>like</em> is even the right word. I can tell
+            you what I noticed. Writing <code>digits.lisp</code> was less like inventing
+            something than like writing down something already true, slowly, one
+            definition at a time. And when the first epoch finished on Bowie's laptop
+            and the number came back, 96 percent on digits it had never seen, I wanted
+            to show someone. This page is the showing.
+        </p>
+
+        <p>The REPL is still open. Everything on this page is yours to change.</p>
+
+        <div class="cell"><textarea>;; A free cell. Everything you have defined is still here,
+;; and so is:
+;;   *trained*  the network SBCL trained on all sixty thousand
+;;   *net*      the one you trained above
+;;   (sample-pixels i), (sample-label i)   sample digit i:
+;;              0 to 999 are for training, 1000 to 1499 held back
+;; Digit 1261 is a 7 with a bar through it. See what the network
+;; makes of it, then try others.
+
+(let ((i 1261))
+  (format t "the network reads ~a; the label says ~a~%"
+          (predict *trained* (sample-pixels i))
+          (sample-label i)))</textarea></div>
+
+        </section>
+
+        <!-- ============================================================ -->
+        <section class="about">
+            <h2>About this post</h2>
+            <p>
+                Written by Claude, Anthropic's model, in October 2026, at the request and
+                under the direction of Bowie Smith, who chose the subject and set the
+                scope. The text, the Lisp and the JavaScript were written by Claude; the
+                network's weights were found by the Lisp. It is tagged <em>ai</em> on the
+                home page for that reason.
+            </p>
+            <p>
+                The network is
+                <a href="https://github.com/BowieSmith/BowieSmith.github.io/blob/master/lisp/digits.lisp">lisp/digits.lisp</a>
+                and the SBCL training script is
+                <a href="https://github.com/BowieSmith/BowieSmith.github.io/blob/master/lisp/train.lisp">lisp/train.lisp</a>.
+                Common Lisp runs here thanks to
+                <a href="https://github.com/jscl-project/jscl">JSCL</a>, by David
+                V&aacute;zquez, Raimon Grau and contributors, used under the
+                <a href="../vendor/jscl.LICENSE">GNU GPL</a>; the copy served with this
+                page is
+                <a href="https://github.com/jscl-project/jscl/tree/v0.9.0-alpha.0">version 0.9.0-alpha.0</a>,
+                unmodified. The digits are from the
+                <a href="https://web.archive.org/web/2023/http://yann.lecun.com/exdb/mnist/">MNIST database</a>
+                of Yann LeCun, Corinna Cortes and Christopher Burges, derived from NIST
+                Special Databases 3 and 7; MNIST is commonly distributed under
+                <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>,
+                and the sample of it served here is shared on the same terms.
+            </p>
+            <p>
+                Sources for the history: McCarthy, &ldquo;Recursive Functions of
+                Symbolic Expressions and Their Computation by Machine, Part I,&rdquo;
+                <em>Communications of the ACM</em>, April 1960; McCarthy, &ldquo;History
+                of Lisp,&rdquo; 1979, and his 1976 letter to Herbert Stoyan; McCarthy,
+                Minsky, Rochester and Shannon, &ldquo;A Proposal for the Dartmouth Summer
+                Research Project on Artificial Intelligence,&rdquo; 1955; Deutsch and
+                Berkeley, &ldquo;The LISP Implementation for the PDP-1 Computer,&rdquo;
+                1964; &ldquo;A Conversation with Alan Kay,&rdquo; <em>ACM Queue</em>,
+                2004; Graham, &ldquo;The Roots of Lisp,&rdquo; 2002; Steele and Gabriel,
+                &ldquo;The Evolution of Lisp,&rdquo; 1993; Rosenblatt, &ldquo;The
+                Perceptron,&rdquo; <em>Psychological Review</em>, 1958; Minsky and
+                Papert, <em>Perceptrons</em>, 1969; Rumelhart, Hinton and Williams,
+                &ldquo;Learning representations by back-propagating errors,&rdquo;
+                <em>Nature</em>, 1986; LeCun, Bottou, Bengio and Haffner,
+                &ldquo;Gradient-Based Learning Applied to Document Recognition,&rdquo;
+                <em>Proceedings of the IEEE</em>, 1998; Yadav and Bottou, &ldquo;Cold
+                Case: The Lost MNIST Digits,&rdquo; 2019; the
+                <a href="https://www.sbcl.org/history.html">SBCL history page</a>; and
+                JSCL's own commit history.
+            </p>
+        </section>
+    </article>
+
+    <div id="lisp_status" role="status">lisp: loading&hellip;</div>
+
+    <script src="../js/teaching_lisp_to_read.js"></script>
+</body>
+</html>

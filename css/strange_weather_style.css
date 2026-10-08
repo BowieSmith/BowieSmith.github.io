@@ -1,0 +1,163 @@
+/* Strange Weather
+ * A full-bleed dark canvas for chaos to paint on. Deliberately different
+ * in feel from the site's other pages -- an unlit room, so the light the
+ * attractor makes is the only thing you see. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #04050a;
+  font-family: "Courier New", Courier, monospace;
+  color: #aeb6cc;
+}
+
+#sky {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+a {
+  color: #9aa6d8;
+  text-decoration: none;
+  border-bottom: 1px dotted #3a4266;
+}
+a:hover {
+  color: #eef0ff;
+  text-shadow: 0 0 8px rgba(150, 170, 255, 0.7);
+}
+
+.back_link {
+  position: fixed;
+  top: 16px;
+  left: 20px;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  z-index: 5;
+  mix-blend-mode: difference;
+}
+
+/* ---- title, top centre ---- */
+.masthead {
+  position: fixed;
+  top: 18px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 4;
+  pointer-events: none;
+}
+.masthead h1 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1.5rem;
+  letter-spacing: 0.5em;
+  color: #dfe4ff;
+  text-shadow: 0 0 24px rgba(120, 140, 255, 0.35);
+}
+.masthead p {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  color: #6b7399;
+}
+
+/* ---- control dock, bottom centre ---- */
+.dock {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  max-width: 92vw;
+  background: rgba(10, 12, 24, 0.55);
+  border: 1px solid rgba(90, 100, 150, 0.25);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  font-family: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: #c4cbe6;
+  background: rgba(40, 46, 78, 0.5);
+  border: 1px solid #3a4266;
+  border-radius: 4px;
+  padding: 6px 13px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+button:hover {
+  color: #fff;
+  border-color: #8b96d8;
+  box-shadow: 0 0 14px rgba(139, 150, 216, 0.35);
+}
+button.active {
+  color: #05060a;
+  background: #aeb6ea;
+  border-color: #aeb6ea;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #7a83aa;
+}
+input[type="range"] {
+  width: 120px;
+  accent-color: #8b96d8;
+  background: transparent;
+}
+
+.readout {
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: #5f6790;
+  text-align: center;
+  line-height: 1.7;
+}
+.readout .eq { color: #97a0ce; }
+.readout .params { color: #c4cbe6; }
+
+.hint {
+  position: fixed;
+  bottom: 20px;
+  right: 22px;
+  z-index: 4;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #4a5178;
+  text-align: right;
+  max-width: 30vw;
+  pointer-events: none;
+}
+
+@media (max-width: 620px) {
+  .hint { display: none; }
+  .masthead { top: 44px; }
+  .masthead h1 { font-size: 1.1rem; letter-spacing: 0.35em; }
+}

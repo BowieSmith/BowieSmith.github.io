@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Ten Thousand Things</title>
+    <link rel="stylesheet" href="../css/morphogenesis_style.css">
+</head>
+<body>
+    <a class="back_link" href="../index.html">&larr; back</a>
+
+    <header>
+        <h1>THE TEN THOUSAND THINGS</h1>
+        <p class="subtitle">a generative morphogenesis</p>
+    </header>
+
+    <p class="statement">
+        Two chemicals — one that builds, one that dissolves — diffuse through a
+        featureless medium until it breaks its own symmetry into form. This is
+        Turing's morphogenesis, and it is also the Tao giving birth to the ten
+        thousand things: activator and inhibitor, yin and yang, arising into
+        pattern without being forced. As the field self-organizes it drives down
+        its <em>free energy</em> — the rate at which it still surprises itself —
+        settling into the shape that evidences it. Wound the pattern with your
+        cursor and watch it navigate back toward its own form.
+    </p>
+
+    <div class="stage">
+        <div class="canvas_wrap">
+            <canvas id="field"></canvas>
+            <p class="canvas_hint">click and drag on the field — wound it, sow it, and watch it heal</p>
+        </div>
+
+        <div class="panel">
+            <section class="readouts">
+                <h2>the field, measured</h2>
+
+                <div class="readout">
+                    <div class="label">
+                        <span>free energy</span>
+                        <span class="value" id="fe_value">—</span>
+                    </div>
+                    <canvas class="spark" id="spark" width="280" height="42"></canvas>
+                    <span class="attribution">after Karl Friston — surprise, minimized</span>
+                </div>
+
+                <div class="readout">
+                    <div class="label">
+                        <span>shannon entropy</span>
+                        <span class="value" id="ent_value">—</span>
+                    </div>
+                    <span class="attribution">after Claude Shannon — uncertainty, in bits</span>
+                </div>
+            </section>
+
+            <section class="controls">
+                <h2>the two forces</h2>
+
+                <div class="control_row">
+                    <label for="feed">feed &mdash; the giving of substance</label>
+                    <input type="range" id="feed" min="0.010" max="0.070" step="0.0005">
+                </div>
+                <div class="control_row">
+                    <label for="kill">kill &mdash; the taking away</label>
+                    <input type="range" id="kill" min="0.045" max="0.070" step="0.0005">
+                </div>
+            </section>
+
+            <section class="controls">
+                <h2>the ten thousand forms</h2>
+                <div class="presets">
+                    <button data-preset="coral">coral</button>
+                    <button data-preset="mitosis">mitosis</button>
+                    <button data-preset="labyrinth">labyrinth</button>
+                    <button data-preset="spots">spots</button>
+                    <button data-preset="flow">flow</button>
+                    <button data-preset="bloom">bloom</button>
+                </div>
+            </section>
+
+            <section class="controls">
+                <h2>the way</h2>
+                <div class="button_row">
+                    <button id="seed_btn">sow</button>
+                    <button id="void_btn">return to void</button>
+                    <button id="pause_btn">pause</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="contemplation">
+        <span class="quote" id="quote"></span>
+        <span class="source" id="source"></span>
+    </div>
+
+    <footer>
+        Reaction-diffusion (Gray&ndash;Scott) after Alan Turing, "The Chemical Basis of
+        Morphogenesis" (1952). With the free energy principle of Karl Friston, the
+        information theory of Claude Shannon, the morphogenetic fields of Michael Levin,
+        the Tao Te Ching, and Alan Watts. &mdash; the universe, wiggling, playing with itself.
+    </footer>
+
+    <script src="../js/morphogenesis.js"></script>
+</body>
+</html>

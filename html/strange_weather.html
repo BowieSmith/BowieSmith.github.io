@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Strange Weather</title>
+    <link rel="stylesheet" href="../css/strange_weather_style.css">
+</head>
+<body>
+    <canvas id="sky"></canvas>
+
+    <a class="back_link" href="../index.html">&larr; back</a>
+
+    <div class="masthead">
+        <h1>STRANGE WEATHER</h1>
+        <p>a gallery of strange attractors</p>
+    </div>
+
+    <p class="hint">
+        move the cursor to steer the weather<br>
+        idle, and it drifts on its own
+    </p>
+
+    <div class="dock">
+        <div class="readout">
+            <span class="eq" id="eq"></span><br>
+            <span class="params" id="params">&nbsp;</span>
+        </div>
+
+        <div class="row">
+            <button data-family="clifford">clifford</button>
+            <button data-family="dejong">de jong</button>
+            <button data-family="svensson">svensson</button>
+        </div>
+
+        <div class="row">
+            <button id="weather_btn">new weather</button>
+            <button id="pause_btn">pause</button>
+            <label class="slider">
+                trails
+                <input type="range" id="trails" min="0.02" max="0.12" step="0.005" value="0.085">
+            </label>
+        </div>
+    </div>
+
+    <script src="../js/strange_weather.js"></script>
+</body>
+</html>

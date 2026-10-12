@@ -34,14 +34,33 @@
   const RESTARTED = "Stopped. Lisp was restarted, and the network and the digits were " +
     "loaded again; anything else you defined will need its cell run again.";
 
+  // A page opened straight from disk (a file:// address) may not fetch other
+  // files or start a Web Worker. Then it reads its data from data/bundle.js
+  // and runs Lisp on its own thread instead. Served over http, as on GitHub
+  // Pages or with `pnpm dev`, it fetches its files and uses a worker.
+  const FROM_FILE = location.protocol === "file:";
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("could not load " + src));
+      document.head.appendChild(script);
+    });
+  }
+
   const Lisp = {
     worker: null,
     pending: new Map(),
     nextId: 1,
     rejectStart: null,
+    core: null,     // the bridge itself, when Lisp runs on the page's thread
+    version: "",
 
     // Start a fresh Lisp, throwing away the old one if there is one.
     start() {
+      if (FROM_FILE) return this.startHere();
       if (this.worker) this.worker.terminate();
       if (this.rejectStart) this.rejectStart(new Error(RESTARTED));
       for (const p of this.pending.values()) p.reject(new Error(RESTARTED));
@@ -64,6 +83,25 @@
       });
     },
 
+    // Run Lisp on the page's own thread: load JSCL and the bridge as plain
+    // scripts and call the bridge directly. Here Lisp cannot be thrown away
+    // and started again, so it starts once and keeps its state.
+    async startHere() {
+      if (!this.core) {
+        const consoleLog = console.log;
+        console.log = () => {}; // JSCL announces every file it loads
+        try {
+          await loadScript("../vendor/jscl.js");
+        } finally {
+          console.log = consoleLog;
+        }
+        await loadScript("../js/lisp_worker.js");
+        this.core = window.LispCore;
+        this.version = this.core.boot();
+      }
+      return this.version;
+    },
+
     settle(m) {
       const p = this.pending.get(m.id);
       if (!p) return;
@@ -73,6 +111,21 @@
     },
 
     send(message) {
+      if (this.core) {
+        // Answer on a later turn of the event loop, as a worker would, so the
+        // page can draw between pieces of work. Copy what is defined, as a
+        // worker's message would, so Lisp never shares the page's arrays.
+        if (message.op === "define") message = Object.assign({}, message, { value: structuredClone(message.value) });
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            try {
+              resolve(this.core.handle(message));
+            } catch (e) {
+              reject(e);
+            }
+          }, 0);
+        });
+      }
       const id = this.nextId++;
       return new Promise((resolve, reject) => {
         this.pending.set(id, { resolve, reject });
@@ -222,12 +275,41 @@
     document.fonts.ready.then(() => cells.forEach((c) => autosize(c.ta)));
   }
 
+  // ---- the page's files ---------------------------------------------------
+  // Over http they are fetched one by one. From disk they all come from
+  // data/bundle.js, which scripts/bundle-data.mjs writes from the same files.
+
+  let bundle = null;
+
+  function fromBundle() {
+    if (!bundle) {
+      bundle = loadScript("../data/bundle.js").then(() => {
+        if (!window.TEACHING_LISP_BUNDLE) throw new Error("data/bundle.js did not load");
+        return window.TEACHING_LISP_BUNDLE;
+      });
+    }
+    return bundle;
+  }
+
+  async function fetchFile(path) {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error("could not fetch " + path.replace("../", ""));
+    return res;
+  }
+
+  function base64ToBuffer(text) {
+    const bytes = atob(text);
+    const out = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) out[i] = bytes.charCodeAt(i);
+    return out.buffer;
+  }
+
   // ---- digits.lisp, split into sections ----------------------------------
 
   async function loadNetworkSource() {
-    const res = await fetch("../lisp/digits.lisp");
-    if (!res.ok) throw new Error("could not fetch lisp/digits.lisp");
-    const text = await res.text();
+    const text = FROM_FILE
+      ? (await fromBundle()).digitsLisp
+      : await (await fetchFile("../lisp/digits.lisp")).text();
     const sections = {};
     let name = null, lines = [];
     const flush = () => { if (name) sections[name] = lines.join("\n").trim() + "\n"; };
@@ -264,10 +346,12 @@
   }
 
   async function loadSamples() {
-    const res = await fetch("../data/digits-sample.json");
-    if (!res.ok) throw new Error("could not fetch data/digits-sample.json");
-    const meta = await res.json();
-    const img = await loadImage("../data/digits-sample.png");
+    const meta = FROM_FILE
+      ? (await fromBundle()).sample
+      : await (await fetchFile("../data/digits-sample.json")).json();
+    // From disk the image comes as a data: URL; its pixels may be read where
+    // a file's may not.
+    const img = await loadImage(FROM_FILE ? meta.png : "../data/digits-sample.png");
     const canvas = document.createElement("canvas");
     canvas.width = img.width;
     canvas.height = img.height;
@@ -334,9 +418,9 @@
   let trained = null;
 
   async function loadWeights() {
-    const res = await fetch("../data/digits.weights");
-    if (!res.ok) throw new Error("could not fetch data/digits.weights");
-    const buf = await res.arrayBuffer();
+    const buf = FROM_FILE
+      ? base64ToBuffer((await fromBundle()).weights)
+      : await (await fetchFile("../data/digits.weights")).arrayBuffer();
     const dv = new DataView(buf);
     const magic = String.fromCharCode(dv.getUint8(0), dv.getUint8(1), dv.getUint8(2), dv.getUint8(3));
     if (magic !== "DGW1") throw new Error("data/digits.weights is not in the expected format");
@@ -408,9 +492,12 @@
   // trained network.
   async function loadIntoLisp() {
     lispReady = false;
-    await filesLoaded;
     setStatus("lisp: starting…");
-    await Lisp.start();
+    // Start Lisp while the files are still arriving.
+    const started = Lisp.start();
+    started.catch(() => {}); // a failure is reported when it is awaited below
+    await filesLoaded;
+    await started;
     setStatus("lisp: reading digits.lisp…");
     for (const cell of cells) {
       if (cell.section) await runQuietly(cell.ta.value, cell);
@@ -559,9 +646,16 @@
     trainBtn.textContent = training.running ? "pause" : training.steps ? "continue" : "start";
   }
 
+  // Checked 25 digits at a time, so no single piece of work keeps Lisp busy
+  // for long; that matters when Lisp shares the page's thread.
   async function measureNet(gen) {
-    const acc = await Lisp.eval("(accuracy *net* *check-pixels* *check-labels*)");
-    if (gen === training.gen) $("acc_now").textContent = Math.round(acc * 100) + " of 100";
+    let right = 0;
+    for (let a = 0; a < 100; a += 25) {
+      right += await Lisp.eval("(round (* 25 (accuracy *net* (subseq *check-pixels* " + a + " " + (a + 25) +
+        ") (subseq *check-labels* " + a + " " + (a + 25) + "))))");
+      if (gen !== training.gen) return;
+    }
+    $("acc_now").textContent = right + " of 100";
   }
 
   async function trainLoop(gen) {
@@ -862,8 +956,14 @@
   async function showMistakes() {
     const host = $("mistakes");
     const readout = $("trained_readout");
-    readout.textContent = "Lisp is reading the " + (samples.count - samples.train) + " held-back digits…";
-    const guesses = await Lisp.eval("(map 'vector (lambda (pixels) (predict *trained* pixels)) *held-pixels*)");
+    const held = samples.count - samples.train;
+    const guesses = [];
+    for (let a = 0; a < held; a += 25) {
+      readout.textContent = "Lisp is reading the held-back digits… " + a + " of " + held;
+      const part = await Lisp.eval("(map 'vector (lambda (pixels) (predict *trained* pixels)) " +
+        "(subseq *held-pixels* " + a + " " + Math.min(held, a + 25) + "))");
+      guesses.push(...part);
+    }
     host.textContent = "";
     let wrong = 0;
     guesses.forEach((guess, k) => {

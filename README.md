@@ -51,6 +51,12 @@ Worker (`js/lisp_worker.js`), and includes a small neural network, written in
 Common Lisp, that reads handwritten digits. The same file, `lisp/digits.lisp`,
 is trained by SBCL and run by JSCL.
 
+The page works both served over http, as on GitHub Pages, and opened
+straight from disk. Browsers stop a page opened from a `file://` address from
+fetching files or starting a worker, so there it loads `data/bundle.js`
+instead, a copy of the Lisp source and the data, and runs Lisp in the tab.
+After editing `lisp/digits.lisp`, run `pnpm bundle` to refresh that copy.
+
 The data the page loads is committed. To rebuild it:
 
 ```sh
@@ -58,6 +64,7 @@ pnpm vendor           # copy JSCL from node_modules into vendor/
 pnpm mnist            # download MNIST into data/mnist/ (55 MB, not committed)
 pnpm subset           # write data/digits-sample.png and .json for the page
 pnpm train            # train with SBCL and write data/digits.weights
+pnpm bundle           # refresh data/bundle.js (subset and train do this too)
 ```
 
 `pnpm train` takes about eight minutes and reaches about 97.8% on the 10,000

@@ -11,17 +11,27 @@
 //                { id, op: "define", name, value }  bind a global to an array
 // Messages out:  { type: "ready", version } once, then { id, result } or
 //                { id, error } for each message, in the order received.
+//
+// A page opened straight from disk (a file:// address) is not allowed to
+// start a worker. Then the page loads vendor/jscl.js and this file as plain
+// scripts instead, and calls LispCore.boot() and LispCore.handle(message)
+// itself: the same Lisp and the same bridge, on the page's own thread.
 // ------------------------------------------------------------------
 
+(function () {
 "use strict";
 
-// JSCL announces every file it loads on the console. Keep it quiet while it boots.
-const consoleLog = console.log;
-console.log = () => {};
-try {
-  importScripts("../vendor/jscl.js");
-} finally {
-  console.log = consoleLog;
+const inWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+
+if (inWorker) {
+  // JSCL announces every file it loads on the console. Keep it quiet while it boots.
+  const consoleLog = console.log;
+  console.log = () => {};
+  try {
+    importScripts("../vendor/jscl.js");
+  } finally {
+    console.log = consoleLog;
+  }
 }
 
 const evaluate = (text) => jscl.evaluateString(text);
@@ -139,20 +149,38 @@ function handle(message) {
   }
 }
 
-self.onmessage = (event) => {
-  const message = event.data;
-  try {
-    self.postMessage({ id: message.id, result: handle(message) });
-  } catch (e) {
-    self.postMessage({ id: message.id, error: e && e.message ? e.message : String(e) });
-  } finally {
-    self.__lisp_in = null;
-  }
-};
-
-try {
+// Install the bridge; returns JSCL's version.
+function boot() {
   evaluate(BRIDGE);
-  self.postMessage({ type: "ready", version: String(evaluate("(cl:lisp-implementation-version)")) });
-} catch (e) {
-  self.postMessage({ type: "failed", error: e && e.message ? e.message : String(e) });
+  return String(evaluate("(cl:lisp-implementation-version)"));
 }
+
+if (inWorker) {
+  self.onmessage = (event) => {
+    const message = event.data;
+    try {
+      self.postMessage({ id: message.id, result: handle(message) });
+    } catch (e) {
+      self.postMessage({ id: message.id, error: e && e.message ? e.message : String(e) });
+    } finally {
+      self.__lisp_in = null;
+    }
+  };
+  try {
+    self.postMessage({ type: "ready", version: boot() });
+  } catch (e) {
+    self.postMessage({ type: "failed", error: e && e.message ? e.message : String(e) });
+  }
+} else {
+  self.LispCore = {
+    boot,
+    handle(message) {
+      try {
+        return handle(message);
+      } finally {
+        self.__lisp_in = null;
+      }
+    },
+  };
+}
+})();

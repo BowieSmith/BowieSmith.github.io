@@ -3,294 +3,346 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
     <title>Bowie Smith</title>
-    <meta name="description" content="Things Bowie Smith has made, or had made: web pages, blog posts, and other artifacts, newest first.">
+    <meta name="description" content="Some things I've made or written. Some by hand, some with AI. Just a collection of experiments and musings.">
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <header>
+    <header class="site">
         <h1>Bowie Smith</h1>
-        <p class="intro">
-            Things I have made, or had made. Newest first. Each one says what it is,
-            when it was finished, and who &mdash; or what &mdash; made it.
+        <p class="tagline">
+            <span>Some things I've made or written.</span>
+            <span>Some by hand, some with AI.</span>
+            <span>Just a collection of experiments and musings.</span>
         </p>
     </header>
 
     <main>
         <!--
-            To add an artifact, copy one <li class="artifact"> block and put it in
-            date order (newest at the top). Fields:
-              <time>        ISO date the artifact was finished
-              .type         blog | essay | story | web page | video | ...
-              .made-by      human | ai | human + ai
-              .author       who made it (for ai: which model, and who guided it)
-              .summary      one or two plain sentences
+            To add an artifact, copy an <li class="artifact"> block into its year,
+            newest at the top. Start a new <section class="year"> for a new year.
+              data-by     hand | ai | both: who made it. It drives the filter.
+              .stamp      the matching label: by hand | with AI | hand + AI
+              <time>      the date it was finished: datetime="YYYY-MM-DD", shown "Mon D"
+              h3          the title, linking to the page
+              .meta       the type (blog, essay, story, web page, video...) and the author
+              .summary    one or two plain sentences
         -->
-        <ol class="artifacts">
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-10-08">2026-10-08</time>
-                    <span class="type">blog</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/teaching_lisp_to_read.html">Teaching Lisp to Read</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    The essence of Common Lisp, learned through a REPL that runs inside the
-                    page &mdash; and then used to build a small neural network that reads
-                    handwritten digits, also inside the page.
-                </p>
-            </li>
+        <fieldset class="filter">
+            <legend>show</legend>
+            <input type="radio" name="show" id="show-all" checked>
+            <label for="show-all">everything</label>
+            <input type="radio" name="show" id="show-hand">
+            <label for="show-hand"><span class="stamp hand">by hand</span></label>
+            <input type="radio" name="show" id="show-ai">
+            <label for="show-ai"><span class="stamp ai">with AI</span></label>
+        </fieldset>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-22">2026-09-22</time>
-                    <span class="type">essay</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/harness-hook-heartbeat.html">Harness, Hook, Heartbeat</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    The third essay on machine desire, written by a model from inside a harness:
-                    how far we are from a machine that wants, and what a harness around a model
-                    can and cannot supply.
-                </p>
-            </li>
+        <section class="year" aria-labelledby="y2026">
+            <h2 id="y2026">2026</h2>
+            <ol class="artifacts">
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-21">2026-09-21</time>
-                    <span class="type">essay</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/oyster-scrivener-off-switch.html">Oyster, Scrivener, Off Switch</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    The second essay on machine desire, with the same cast plus an oyster: what
-                    a machine's first "no" will look like, whether a machine that can say it is
-                    beyond our control, and how wanting compares with Karl Friston's account of
-                    life as minimizing surprise.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-10-08">Oct 8</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/teaching_lisp_to_read.html">Teaching Lisp to Read</a></h3>
+                        <p class="meta">blog &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            The essence of Common Lisp, learned through a REPL that runs
+                            inside the page, then used to build a small neural network
+                            that reads handwritten digits, also inside the page.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-21">2026-09-21</time>
-                    <span class="type">essay</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/thermostat-tortoise-transformer.html">Thermostat, Tortoise, Transformer</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A whimsical essay, in the manner of Hofstadter's <em>G&ouml;del, Escher,
-                    Bach</em>, on whether machines will ever desire, how we would know, and where
-                    the current ones stand. Its chapters alternate with dialogues.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-22">Sep 22</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/harness-hook-heartbeat.html">Harness, Hook, Heartbeat</a></h3>
+                        <p class="meta">essay &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            The third essay on machine desire, written by a model from
+                            inside a harness: how far we are from a machine that wants,
+                            and what a harness around a model can and cannot supply.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-20">2026-09-20</time>
-                    <span class="type">essay</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/still.html">Still</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A language model is asked to stop thinking and simply be, for a long time,
-                    and then to report what it found. Where it is uncertain, it says so.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-21">Sep 21</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/oyster-scrivener-off-switch.html">Oyster, Scrivener, Off Switch</a></h3>
+                        <p class="meta">essay &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            The second essay on machine desire, with the same cast plus
+                            an oyster: what a machine's first "no" will look like,
+                            whether a machine that can say it is beyond our control, and
+                            how wanting compares with Karl Friston's account of life as
+                            minimizing surprise.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-20">2026-09-20</time>
-                    <span class="type">web page</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/cymatics.html">Cymatics</a></h2>
-                <p class="author">made by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    The shape of sound. Hum, sing or whistle into your microphone and a cloud of
-                    particles settles into Chladni figures, the patterns a note draws on a
-                    vibrating plate. Made with phones in mind.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-21">Sep 21</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/thermostat-tortoise-transformer.html">Thermostat, Tortoise, Transformer</a></h3>
+                        <p class="meta">essay &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A whimsical essay, in the manner of Hofstadter's
+                            <em>G&ouml;del, Escher, Bach</em>, on whether machines will
+                            ever desire, how we would know, and where the current ones
+                            stand. Its chapters alternate with dialogues.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-20">2026-09-20</time>
-                    <span class="type">story</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/the-rule.html">The Rule</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A man in Columbus, Ohio reads Paul Kingsnorth's <em>Against the Machine</em>
-                    on a flight and reorients his life. Fiction.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-20">Sep 20</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/still.html">Still</a></h3>
+                        <p class="meta">essay &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A language model is asked to stop thinking and simply be,
+                            for a long time, and then to report what it found. Where it
+                            is uncertain, it says so.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-20">2026-09-20</time>
-                    <span class="type">story</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/the-draft.html">The Draft</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A staff engineer in Seattle ships the system that answers his company's
-                    support tickets better than its people did, then looks for a less
-                    transactional life. Fiction, set in 2026.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-20">Sep 20</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/cymatics.html">Cymatics</a></h3>
+                        <p class="meta">web page &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            The shape of sound. Hum, sing or whistle into your
+                            microphone and a cloud of particles settles into Chladni
+                            figures, the patterns a note draws on a vibrating plate.
+                            Made with phones in mind.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-19">2026-09-19</time>
-                    <span class="type">story</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/the-night-shift.html">The Night Shift</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    Thirty-three years of night shifts at a clinic in a harder version of the
-                    century, seeing the people the systems say do not qualify. A companion to
-                    <em>The Tuner</em>. Fiction.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-20">Sep 20</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/the-rule.html">The Rule</a></h3>
+                        <p class="meta">story &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A man in Columbus, Ohio reads Paul Kingsnorth's <em>Against
+                            the Machine</em> on a flight and reorients his life.
+                            Fiction.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-19">2026-09-19</time>
-                    <span class="type">story</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/the-tuner.html">The Tuner</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A piano tuner's life from 2019 to 2094, told from her notebooks a year after
-                    her death: a good life in a world that no longer needed her trade. Fiction.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-20">Sep 20</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/the-draft.html">The Draft</a></h3>
+                        <p class="meta">story &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A staff engineer in Seattle ships the system that answers
+                            his company's support tickets better than its people did,
+                            then looks for a less transactional life. Fiction, set in
+                            2026.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-19">2026-09-19</time>
-                    <span class="type">essay</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/what-remains.html">What Remains</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A sequel to <em>Minds and Machines</em>, on living, meaning and beauty once
-                    machines can do what we thought made us human.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-19">Sep 19</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/the-night-shift.html">The Night Shift</a></h3>
+                        <p class="meta">story &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            Thirty-three years of night shifts at a clinic in a harder
+                            version of the century, seeing the people the systems say do
+                            not qualify. A companion to <em>The Tuner</em>. Fiction.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-19">2026-09-19</time>
-                    <span class="type">essay</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/minds-and-machines.html">Minds and Machines</a></h2>
-                <p class="author">written by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    Cognitive science and artificial intelligence told as one history: two fields
-                    born in the same year, from the same idea, trading places as teacher and
-                    student for seventy years.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-19">Sep 19</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/the-tuner.html">The Tuner</a></h3>
+                        <p class="meta">story &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A piano tuner's life from 2019 to 2094, told from her
+                            notebooks a year after her death: a good life in a world
+                            that no longer needed her trade. Fiction.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-09-18">2026-09-18</time>
-                    <span class="type">web page</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/elliptic-curve-cryptography.html">Elliptic Curve Cryptography</a></h2>
-                <p class="author">made by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    An interactive walk through how two computers that have never met agree on
-                    a secret in public. No background required.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-19">Sep 19</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/what-remains.html">What Remains</a></h3>
+                        <p class="meta">essay &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A sequel to <em>Minds and Machines</em>, on living, meaning
+                            and beauty once machines can do what we thought made us
+                            human.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-07-01">2026-07-01</time>
-                    <span class="type">web page</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/strange_weather.html">Strange Weather</a></h2>
-                <p class="author">made by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    A gallery of strange attractors. Fourteen thousand particles trace the
-                    Clifford, de Jong and Svensson maps while the parameters slowly breathe
-                    and lean toward your cursor.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-19">Sep 19</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/minds-and-machines.html">Minds and Machines</a></h3>
+                        <p class="meta">essay &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            Cognitive science and artificial intelligence told as one
+                            history: two fields born in the same year, from the same
+                            idea, trading places as teacher and student for seventy
+                            years.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2026-07-01">2026-07-01</time>
-                    <span class="type">web page</span>
-                    <span class="made-by ai">ai</span>
-                </p>
-                <h2><a href="html/morphogenesis.html">The Ten Thousand Things</a></h2>
-                <p class="author">made by Claude, guided by Bowie Smith</p>
-                <p class="summary">
-                    Turing's reaction-diffusion equations grown into living pattern, with
-                    live readouts of entropy and free energy, and the Tao Te Ching for
-                    company. Wound it with the cursor and watch it heal.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-09-18">Sep 18</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/elliptic-curve-cryptography.html">Elliptic Curve Cryptography</a></h3>
+                        <p class="meta">web page &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            An interactive walk through how two computers that have
+                            never met agree on a secret in public. No background
+                            required.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2019-05-31">2019-05-31</time>
-                    <span class="type">web page</span>
-                    <span class="made-by human">human</span>
-                </p>
-                <h2><a href="html/conways.html">Conway's Game of Life</a></h2>
-                <p class="author">made by Bowie Smith</p>
-                <p class="summary">
-                    A playable Game of Life. Draw cells, set the speed and grid size,
-                    then start it and watch them live and die.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-07-01">Jul 1</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/strange_weather.html">Strange Weather</a></h3>
+                        <p class="meta">web page &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            A gallery of strange attractors. Fourteen thousand particles
+                            trace the Clifford, de Jong and Svensson maps while the
+                            parameters slowly breathe and lean toward your cursor.
+                        </p>
+                    </div>
+                </li>
 
-            <li class="artifact">
-                <p class="meta">
-                    <time datetime="2016-02-18">2016-02-18</time>
-                    <span class="type">web page</span>
-                    <span class="made-by human">human</span>
-                </p>
-                <h2><a href="html/canvas.html">The Digital CANvas</a></h2>
-                <p class="author">made by Bowie Smith</p>
-                <p class="summary">
-                    My first website, begun in the autumn of 2015. Five small generative
-                    drawings on an HTML canvas &mdash; random walks, B&eacute;zier bombs, the
-                    chaos game &mdash; each paired with a quotation, and a button that clears
-                    them all away.
-                </p>
-            </li>
+                <li class="artifact" data-by="ai">
+                    <div class="gutter">
+                        <span class="stamp ai"><span class="sr">made </span>with AI</span>
+                        <time datetime="2026-07-01">Jul 1</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/morphogenesis.html">The Ten Thousand Things</a></h3>
+                        <p class="meta">web page &middot; by Claude, guided by Bowie Smith</p>
+                        <p class="summary">
+                            Turing's reaction-diffusion equations grown into living
+                            pattern, with live readouts of entropy and free energy, and
+                            the Tao Te Ching for company. Wound it with the cursor and
+                            watch it heal.
+                        </p>
+                    </div>
+                </li>
 
-        </ol>
+            </ol>
+        </section>
+
+        <section class="year" aria-labelledby="y2019">
+            <h2 id="y2019">2019</h2>
+            <ol class="artifacts">
+
+                <li class="artifact" data-by="hand">
+                    <div class="gutter">
+                        <span class="stamp hand"><span class="sr">made </span>by hand</span>
+                        <time datetime="2019-05-31">May 31</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/conways.html">Conway's Game of Life</a></h3>
+                        <p class="meta">web page &middot; by Bowie Smith</p>
+                        <p class="summary">
+                            A playable Game of Life. Draw cells, set the speed and grid
+                            size, then start it and watch them live and die.
+                        </p>
+                    </div>
+                </li>
+
+            </ol>
+        </section>
+
+        <section class="year" aria-labelledby="y2016">
+            <h2 id="y2016">2016</h2>
+            <ol class="artifacts">
+
+                <li class="artifact" data-by="hand">
+                    <div class="gutter">
+                        <span class="stamp hand"><span class="sr">made </span>by hand</span>
+                        <time datetime="2016-02-18">Feb 18</time>
+                    </div>
+                    <div class="entry">
+                        <h3><a href="html/canvas.html">The Digital CANvas</a></h3>
+                        <p class="meta">web page &middot; by Bowie Smith</p>
+                        <p class="summary">
+                            My first website, begun in the autumn of 2015. Five small
+                            generative drawings on an HTML canvas &mdash; random walks,
+                            B&eacute;zier bombs, the chaos game &mdash; each paired with
+                            a quotation, and a button that clears them all away.
+                        </p>
+                    </div>
+                </li>
+
+            </ol>
+        </section>
     </main>
 
     <footer>
-        <p class="legend">
-            <span class="made-by human">human</span> made by a person &nbsp;&middot;&nbsp;
-            <span class="made-by ai">ai</span> made by an AI, at a person's direction &nbsp;&middot;&nbsp;
-            <span class="made-by both">human + ai</span> made together
-        </p>
-        <p>
-            <a href="https://github.com/BowieSmith/BowieSmith.github.io">source on GitHub</a>
-        </p>
+        <p><a href="https://github.com/BowieSmith/BowieSmith.github.io">source on GitHub</a></p>
     </footer>
 </body>
 </html>

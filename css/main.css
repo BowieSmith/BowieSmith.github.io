@@ -1,27 +1,33 @@
-/* Home page: a plain list of artifacts, newest first.
- * Monospace, black on white, like the site has always been. */
+/* Home page: an index of things made by hand and with AI, newest first.
+ * Courier, black on white, like every page on the site since 2015.
+ *
+ * Each artifact has a stamp in the left column: a solid "by hand" or an
+ * outlined "with AI". The two differ in fill and in words, not only in
+ * colour, so they stay distinct for anyone, in either colour scheme. */
 
 :root {
-  --ink: #111;
-  --paper: #fff;
-  --muted: #666;
-  --rule: #ddd;
-  --link: #0b4ea2;
-  --human: #8a5a1a;
-  --ai: #2a6f97;
-  --both: #6d4c9f;
+  color-scheme: light dark;
+  --ink: #1d1d1d;
+  --ink-2: #3b3b3b;
+  --muted: #6b6b6b;
+  --rule: #e4e4e4;
+  --paper: #ffffff;
+  --hand: #1d1d1d;
+  --ai: #2b6390;
+  --focus: #2b6390;
+  --mono: "Courier New", Courier, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --ink: #e6e6e6;
-    --paper: #111;
-    --muted: #9a9a9a;
-    --rule: #333;
-    --link: #8ab4f8;
-    --human: #e0a35a;
-    --ai: #7cc4ea;
-    --both: #c3a6f0;
+    --ink: #e8e6e1;
+    --ink-2: #c8c5be;
+    --muted: #9a978f;
+    --rule: #2f2f2f;
+    --paper: #141414;
+    --hand: #e8e6e1;
+    --ai: #7fb8e6;
+    --focus: #7fb8e6;
   }
 }
 
@@ -30,131 +36,278 @@
 }
 
 body {
-  max-width: 42rem;
+  max-width: 46rem;
   margin: 0 auto;
-  padding: 2.5rem 1rem 3rem;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--ink);
+  padding: 4rem 1.25rem 2.5rem;
   background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
 }
 
 a {
-  color: var(--link);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
+  color: inherit;
 }
 
-a:hover {
-  text-decoration-style: dotted;
+a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Text for screen readers only. */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ---- header ---- */
 
-h1 {
-  font-size: 1.6rem;
-  font-weight: normal;
-  letter-spacing: 0.08em;
-  margin: 0 0 0.5rem;
+.site h1 {
+  margin: 0 0 0.8rem;
+  font-size: 1.9rem;
+  font-weight: bold;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
 }
 
-.intro {
-  color: var(--muted);
-  margin: 0 0 2.5rem;
-  max-width: 36rem;
-}
-
-/* ---- the list ---- */
-
-.artifacts {
-  list-style: none;
+.tagline {
   margin: 0;
-  padding: 0;
+  color: var(--ink-2);
+  line-height: 1.65;
 }
 
-.artifact {
-  border-top: 1px solid var(--rule);
-  padding: 1.4rem 0 1.6rem;
+/* One sentence to a line. */
+.tagline span {
+  display: block;
 }
 
-.artifact:last-child {
-  border-bottom: 1px solid var(--rule);
-}
+/* ---- the stamps ---- */
 
-.meta {
-  margin: 0 0 0.3rem;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.meta > *:not(:last-child)::after {
-  content: "\00b7";
-  margin: 0 0.6em;
-  color: var(--muted);
-}
-
-.made-by {
+.stamp {
   display: inline-block;
-  padding: 0 0.45em;
-  border: 1px solid currentColor;
-  border-radius: 3px;
-  line-height: 1.5;
+  padding: 0.34em 0.5em 0.3em 0.64em;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  font-size: 0.66rem;
+  font-weight: bold;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.made-by.human { color: var(--human); }
-.made-by.ai    { color: var(--ai); }
-.made-by.both  { color: var(--both); }
-
-.artifact h2 {
-  font-size: 1.2rem;
-  font-weight: normal;
-  margin: 0;
-  line-height: 1.35;
+.stamp.hand {
+  border-color: var(--hand);
+  background: var(--hand);
+  color: var(--paper);
 }
 
-.artifact h2 a {
+.stamp.ai {
+  color: var(--ai);
+}
+
+.stamp.both {
+  border-style: dashed;
+  color: var(--hand);
+}
+
+/* ---- show: everything, by hand, with AI ---- */
+/* Plain radio buttons and CSS; no script. */
+
+.filter {
+  margin: 2.4rem 0 0;
+  padding: 0;
+  border: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.filter legend {
+  float: left;
+  margin: 0 0.9rem 0 0;
+  padding: 0.3rem 0;
+  letter-spacing: 0.06em;
+}
+
+.filter input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.filter label {
+  display: inline-block;
+  margin-right: 0.35rem;
+  padding: 0.3rem 0.45rem 0.35rem;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.filter label:hover {
+  border-bottom-color: var(--rule);
+}
+
+.filter input:checked + label {
+  border-bottom-color: var(--ink);
   color: var(--ink);
 }
 
-.artifact h2 a:hover {
-  color: var(--link);
+.filter input:focus-visible + label {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
-.author {
-  margin: 0.15rem 0 0;
-  font-size: 0.85rem;
+body:has(#show-hand:checked) .artifact:not([data-by="hand"]):not([data-by="both"]),
+body:has(#show-ai:checked) .artifact:not([data-by="ai"]):not([data-by="both"]),
+body:has(#show-hand:checked) .year:not(:has([data-by="hand"], [data-by="both"])),
+body:has(#show-ai:checked) .year:not(:has([data-by="ai"], [data-by="both"])) {
+  display: none;
+}
+
+/* A browser that cannot do the filtering above simply shows everything. */
+@supports not selector(:has(a)) {
+  .filter {
+    display: none;
+  }
+}
+
+/* ---- the years ---- */
+
+.year h2 {
+  margin: 3.2rem 0 1.6rem;
+  padding-left: 0.3em; /* balances the letter-spacing after the last digit */
+  font-size: 0.78rem;
+  font-weight: bold;
+  letter-spacing: 0.3em;
+  text-align: center;
+  color: var(--muted);
+}
+
+.year h2::before {
+  content: "\2014\00a0";
+}
+
+.year h2::after {
+  content: "\00a0\2014";
+}
+
+/* ---- the artifacts ---- */
+
+.artifacts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.artifact {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr);
+  column-gap: 1.5rem;
+  margin: 0 0 2rem;
+}
+
+.gutter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding-top: 0.22rem;
+}
+
+.gutter time {
+  padding-left: 0.1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+.entry h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: bold;
+  line-height: 1.35;
+}
+
+.entry h3 a {
+  text-decoration: none;
+}
+
+.entry h3 a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.meta {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
   color: var(--muted);
 }
 
 .summary {
-  margin: 0.6rem 0 0;
-  max-width: 38rem;
+  max-width: 36rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink-2);
 }
 
 /* ---- footer ---- */
 
 footer {
-  margin-top: 2.5rem;
+  margin-top: 3.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
   font-size: 0.8rem;
   color: var(--muted);
 }
 
 footer p {
-  margin: 0.4rem 0;
+  margin: 0;
 }
 
-.legend .made-by {
-  margin-right: 0.3em;
+footer a {
+  text-underline-offset: 0.18em;
 }
 
-@media (max-width: 480px) {
+/* ---- phones ---- */
+
+@media (max-width: 600px) {
   body {
-    padding-top: 1.5rem;
+    padding-top: 2.5rem;
   }
 
-  .meta > *:not(:last-child)::after {
-    margin: 0 0.45em;
+  .site h1 {
+    font-size: 1.6rem;
+  }
+
+  .filter legend {
+    float: none;
+    padding-bottom: 0.2rem;
+  }
+
+  .year h2 {
+    margin: 2.6rem 0 1.4rem;
+  }
+
+  .artifact {
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 1.8rem;
+  }
+
+  .gutter {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 0 0.45rem;
   }
 }

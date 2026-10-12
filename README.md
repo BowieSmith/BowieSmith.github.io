@@ -22,10 +22,11 @@ package.json          JavaScript libraries, and the project's commands
 ## Adding an artifact
 
 1. Put the page in `html/`, its stylesheet in `css/`, its script in `js/`.
-2. Copy an `<li class="artifact">` block in `index.html` and fill in the date,
-   the type (`blog`, `essay`, `story`, `web page`, `video`, ...), who made it (`human`,
-   `ai` or `human + ai`), the author line, and a one- or two-sentence summary.
-3. Keep the list in date order, newest at the top.
+2. In `index.html`, copy an `<li class="artifact">` block into its year,
+   newest at the top, and start a new `<section class="year">` for a new year.
+   Fill in `data-by` (`hand`, `ai` or `both`), the matching stamp, the date,
+   the title and link, the type and author, and a one- or two-sentence summary.
+   The comment above the list spells out each field.
 
 ## Working on the site
 

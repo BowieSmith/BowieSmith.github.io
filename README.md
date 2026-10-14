@@ -11,6 +11,7 @@ index.html            the home page: the list of artifacts
 html/                 one page per artifact
 css/                  one stylesheet per page (main.css is the home page's)
 js/                   one script per page that needs one
+images/               pictures the pages show (the basement sketch and drawings)
 lisp/                 Common Lisp: digits.lisp (the network), train.lisp (training)
 scripts/              small Node scripts that prepare data
 data/                 data the pages load (sample digits, trained weights)
@@ -70,3 +71,16 @@ pnpm bundle           # refresh data/bundle.js (subset and train do this too)
 `pnpm train` takes about eight minutes and reaches about 97.8% on the 10,000
 MNIST test digits. It accepts optional arguments: epochs, hidden-layer size,
 learning rate, and jitter in pixels, for example `pnpm train 10 64 0.05 1`.
+
+## The basement post
+
+"A Basement, Three Ways" (`html/a-basement-three-ways.html`) shows a
+hand-drawn basement plan, photographed, next to two drawings made from it: a
+clean floor plan and an axonometric view of the finished rooms. Both drawings
+are SVG files written by one script, `scripts/basement-plan.mjs`, from a
+description of the plan in feet at the top of that file. The images, including
+the untouched photo, are in `images/basement/`.
+
+```sh
+pnpm basement         # redraw images/basement/plan.svg and isometric.svg
+```

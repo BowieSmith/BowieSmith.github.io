@@ -9,7 +9,8 @@
     "mnist": "node scripts/fetch-mnist.mjs",
     "subset": "node scripts/make-subset.mjs && node scripts/bundle-data.mjs",
     "train": "sbcl --script lisp/train.lisp && node scripts/bundle-data.mjs",
-    "bundle": "node scripts/bundle-data.mjs"
+    "bundle": "node scripts/bundle-data.mjs",
+    "basement": "node scripts/basement-plan.mjs"
   },
   "dependencies": {
     "jscl": "0.9.0-alpha.0"

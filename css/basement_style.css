@@ -1,0 +1,287 @@
+/* A Basement, Three Ways
+ * A read with three large documents in it. Serif for the prose, monospace
+ * for labels. The documents are white sheets in either colour scheme,
+ * because they are documents; the page around them follows the reader. */
+
+:root {
+  --ink: #1b1b1b;
+  --paper: #fdfcf9;
+  --muted: #6a6a6a;
+  --rule: #e3e0d8;
+  --accent: #2a6f97;
+  --sheet: #ffffff;
+  --sheet-edge: #d9d5ca;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.09);
+  --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Times New Roman", serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e4e2dc;
+    --paper: #151515;
+    --muted: #9a9890;
+    --rule: #2c2c2c;
+    --accent: #7cc4ea;
+    --sheet-edge: #3a3a3a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.55);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  text-decoration-style: dotted;
+}
+
+.back_link {
+  position: absolute;
+  top: 1rem;
+  left: 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.back_link:hover {
+  color: var(--accent);
+}
+
+article {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 4.5rem 1rem 5rem;
+}
+
+/* ---- header ---- */
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.kicker .made-by {
+  display: inline-block;
+  padding: 0 0.45em;
+  border: 1px dashed currentColor;
+  border-radius: 3px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 2.3rem;
+  line-height: 1.15;
+  margin: 0 0 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.byline {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 3rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---- prose ---- */
+
+h2 {
+  font-weight: normal;
+  font-size: 1.65rem;
+  line-height: 1.25;
+  margin: 3.6rem 0 1.2rem;
+}
+
+h2 .part {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin: 0 0 1.15rem;
+}
+
+ul,
+ol {
+  padding-left: 1.4rem;
+}
+
+li {
+  margin-bottom: 0.6rem;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+
+/* A callout number, matching the circled numbers on the plan. */
+.num {
+  display: inline-block;
+  min-width: 1.5em;
+  height: 1.5em;
+  margin: 0 0.15em 0 0.05em;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: 0.7em;
+  font-style: normal;
+  line-height: 1.5em;
+  text-align: center;
+  vertical-align: 0.2em;
+}
+
+/* ---- the three documents ---- */
+/* Each is wider than the prose: up to 70rem, or the viewport less a gutter. */
+
+.doc {
+  --w: min(100vw - 2rem, 70rem);
+  width: var(--w);
+  margin: 2.4rem 0 2.6rem calc((100% - var(--w)) / 2);
+}
+
+.doc .sheet {
+  display: block;
+  background: var(--sheet);
+  border: 1px solid var(--sheet-edge);
+  box-shadow: var(--shadow);
+  line-height: 0;
+}
+
+.doc .sheet img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The photo is portrait: let its height, not the width, decide its size.
+ * The sheet shrinks to the image, so the image's limits are set in viewport
+ * units rather than percentages, which would have nothing to resolve against. */
+.doc.portrait {
+  text-align: center;
+}
+
+.doc.portrait .sheet {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+}
+
+.doc.portrait .sheet img {
+  width: auto;
+  height: auto;
+  max-width: calc(100vw - 2rem - 2px);
+  max-height: 88vh;
+}
+
+.doc.portrait figcaption {
+  text-align: left;
+}
+
+.doc figcaption {
+  max-width: 40rem;
+  margin: 0.9rem auto 0;
+  padding: 0 0.2rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.doc figcaption .label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .doc .sheet {
+    filter: brightness(0.92);
+  }
+}
+
+/* ---- about ---- */
+
+.about {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.about h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.8rem;
+  color: var(--ink);
+}
+
+/* ---- phones ---- */
+
+@media (max-width: 600px) {
+  article {
+    padding-top: 3.8rem;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  .doc {
+    --w: calc(100vw - 2rem);
+  }
+
+  .doc.portrait .sheet img {
+    max-height: 80vh;
+    max-width: calc(100vw - 2rem - 2px);
+  }
+}
